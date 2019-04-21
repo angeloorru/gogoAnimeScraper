@@ -1,6 +1,5 @@
 package services;
 
-import com.sapher.youtubedl.YoutubeDLException;
 import helpers.Helpers;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -9,6 +8,7 @@ import org.jsoup.select.Elements;
 import video_file_downloader.EpisodeDownloader;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -16,43 +16,39 @@ public class RapidVideo {
 
     private static final Logger LOGGER = Logger.getLogger(RapidVideo.class.getName());
 
-    EpisodeDownloader episodeDownloader = new EpisodeDownloader();
+    EpisodeDownloader episodeProcessor = new EpisodeDownloader();
     Helpers helpers = new Helpers();
 
+    private static List<String> urlList = new ArrayList<>();
 
     /**
      * @desc Parses the gogo anime page and extracts url video links from Rapid Video
      * for making the request with youtube-dl.
      */
     public void downloadVideoFromWebPageRapidVideo() {
+        urlList =  episodeProcessor.constructUrlForRequest();
+        for (String url : urlList) {
             if (helpers.isValidUrl(url)) {
                 Document doc;
 
                 try {
                     doc = Jsoup.connect(url).get();
-                    Elements productName = doc.getElementsByClass("rapidvideo");
+                    Elements elementName = doc.getElementsByClass("rapidvideo");
                     //TODO: Try to merge services together in the same class
-                    if (productName != null && helpers.isEpisodeAvailable(productName)) {
-                        Element link = productName.select("a").first();
+                    if (elementName != null && helpers.isEpisodeAvailable(elementName)) {
+                        Element link = elementName.select("a").first();
                         String videoLink = link.attr("data-video");
 
-                        LOGGER.info("Trying to download using Rapid Video Service");
-                        episodeDownloader.downloadVideoWithYouTubeDl(videoLink);
-
-                        //LOGGER.info("Sending job to Open Load Service");
-                        //downloadVideoFromWebPageOpenLoad();
+                        LOGGER.info("[Rapid Video]: Sending link " + videoLink + " to youtube-dl");
+                        episodeProcessor.downloadVideoWithYouTubeDl(videoLink);
+                    }else{
+                        urlList.remove(url);
                     }
-                     /*else {
-                        //TODO:Log to a txt file the missing episode
-                        LOGGER.severe("[RapidVideo]: Unable to download file." + " Episode number " +
-                                EpisodeDownloader.episodeCounter + " does not exist");
-                        //Skip episode
-                        EpisodeDownloader.episodeCounter++;
-                    }*/
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
+        }
     }
 
     /**
@@ -67,18 +63,18 @@ public class RapidVideo {
                 try {
                     document = Jsoup.connect(url).get();
 
-                    Elements productName = document.getElementsByClass("open");
+                    Elements elementName = document.getElementsByClass("open");
 
-                    if (helpers.isEpisodeAvailable(productName)) {
-                        Element link = productName.select("a").first();
+                    if (elementName != null && helpers.isEpisodeAvailable(elementName)) {
+                        Element link = elementName.select("a").first();
                         String videoLink = link.attr("data-video");
 
-                        LOGGER.info("[OpenLoad]: Trying to download using Open Load Service");
-                        episodeDownloader.downloadVideoWithYouTubeDl(videoLink);
-                    }/*else{
+                        LOGGER.info("[Open Load]: Sending link " + videoLink + " to youtube-dl");
+                        episodeProcessor.downloadVideoWithYouTubeDl(videoLink);
+                    } else {
                         //TODO:Log to a txt file the missing episode
                         LOGGER.info("[OpenLoad]: Unable to download file. The file does not exist");
-                    }*/
+                    }
 
                 } catch (IOException e) {
                     e.printStackTrace();
