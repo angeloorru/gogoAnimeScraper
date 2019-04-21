@@ -1,5 +1,6 @@
 package services;
 
+import com.sapher.youtubedl.YoutubeDLException;
 import helpers.Helpers;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -19,20 +20,22 @@ public class RapidVideo {
     EpisodeDownloader episodeProcessor = new EpisodeDownloader();
     Helpers helpers = new Helpers();
 
-    private static List<String> urlList = new ArrayList<>();
+    private List<String> urlList = new ArrayList<>();
 
     /**
      * @desc Parses the gogo anime page and extracts url video links from Rapid Video
      * for making the request with youtube-dl.
      */
     public void downloadVideoFromWebPageRapidVideo() {
-        urlList =  episodeProcessor.constructUrlForRequest();
+        urlList = episodeProcessor.constructUrlForRequest();
         for (String url : urlList) {
             if (helpers.isValidUrl(url)) {
                 Document doc;
 
                 try {
                     doc = Jsoup.connect(url).get();
+                    int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
+
                     Elements elementName = doc.getElementsByClass("rapidvideo");
                     //TODO: Try to merge services together in the same class
                     if (elementName != null && helpers.isEpisodeAvailable(elementName)) {
@@ -40,9 +43,17 @@ public class RapidVideo {
                         String videoLink = link.attr("data-video");
 
                         LOGGER.info("[Rapid Video]: Sending link " + videoLink + " to youtube-dl");
-                        episodeProcessor.downloadVideoWithYouTubeDl(videoLink);
-                    }else{
-                        urlList.remove(url);
+                        try {
+                            episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
+                        } catch (YoutubeDLException e) {
+                            LOGGER.severe(e.getMessage());
+                            e.printStackTrace();
+                            //Try to use the following service
+                            downloadVideoFromWebPageOpenLoad();
+                        }
+                    } else {
+                        //TODO:Log missing episode to a text file: errors.txt
+                        System.out.println("File is missing. Need a log text file");
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -56,26 +67,34 @@ public class RapidVideo {
      * for making the request with youtube-dl.
      */
     public void downloadVideoFromWebPageOpenLoad() {
+        urlList = episodeProcessor.constructUrlForRequest();
         for (String url : urlList) {
             if (helpers.isValidUrl(url)) {
-                Document document;
+                Document doc;
 
                 try {
-                    document = Jsoup.connect(url).get();
+                    doc = Jsoup.connect(url).get();
+                    int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
 
-                    Elements elementName = document.getElementsByClass("open");
-
+                    Elements elementName = doc.getElementsByClass("open");
+                    //TODO: Try to merge services together in the same class
                     if (elementName != null && helpers.isEpisodeAvailable(elementName)) {
                         Element link = elementName.select("a").first();
                         String videoLink = link.attr("data-video");
 
                         LOGGER.info("[Open Load]: Sending link " + videoLink + " to youtube-dl");
-                        episodeProcessor.downloadVideoWithYouTubeDl(videoLink);
+                        try {
+                            episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
+                        } catch (YoutubeDLException e) {
+                            LOGGER.severe(e.getMessage());
+                            e.printStackTrace();
+                            //Use the following service
+                            downloadVideoFromWebPageRapidVideo();
+                        }
                     } else {
-                        //TODO:Log to a txt file the missing episode
-                        LOGGER.info("[OpenLoad]: Unable to download file. The file does not exist");
+                        //TODO:Log missing episode to a text file: errors.txt
+                        System.out.println("File is missing. Need a log text file");
                     }
-
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

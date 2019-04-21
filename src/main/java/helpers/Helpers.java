@@ -34,4 +34,13 @@ public class Helpers {
         }
         return false;
     }
+
+    /**
+     * @param url
+     * @return
+     * @desc Extracts the episode number from link used for resetting the counter when an episode is not found.
+     */
+    public int getEpisodeNumberForSettingCounter(String url) {
+        return Integer.valueOf(url.substring(url.length() - 2));
+    }
 }

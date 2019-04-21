@@ -20,10 +20,10 @@ import static java.lang.Thread.sleep;
 public class EpisodeDownloader {
 
     private static final Logger LOGGER = Logger.getLogger(EpisodeDownloader.class.getName());
-    private static final String URL_HOME = "https://www2.gogoanime.io/category/mobile-suit-gundam-seed-destiny-special-edition-dub";
-    private static final int FIRST_EPISODE = 1;
+    private static final String URL_HOME = "https://www2.gogoanime.io/category/mobile-suit-gundam-seed-dub";
+    private static final int FIRST_EPISODE = 47;
 
-    public static int episodeCounter = 1;
+    public static int episodeCounter = 47;
 
     private String URL = buildUrlForDownloadByEpisode(URL_HOME);
     private String seriesTitle = extractFileName();
@@ -51,24 +51,22 @@ public class EpisodeDownloader {
      * @param link Used for the logger and YouTube-DL request only
      * @desc Uses youtube-dl java for downloading the video.
      */
-    public void downloadVideoWithYouTubeDl(String link) {
+    public void downloadVideoWithYouTubeDl(String link, int episodeNumberFromService) throws YoutubeDLException {
+
+        if (episodeCounter < episodeNumberFromService) {
+            episodeCounter = episodeNumberFromService;
+        }
+
         String episodeNumber = buildFileNameIfLessThanTenEpisodes();
-        String fileName = buildFileName(episodeNumber, seriesTitle, seriesYear);
+        String fileName = buildFileName(String.valueOf(episodeCounter), seriesTitle, seriesYear);
 
         YoutubeDLRequest request = buildYoutubeDLRequest(link, fileName);
 
         LOGGER.info("For Link " + link + ": Attempting to download " +
-                fileName + " [ Episode " + episodeNumber + " of " + totalNumberOfEpisodes + " ]");
+                fileName + " [ Episode " + episodeCounter + " of " + totalNumberOfEpisodes + " ]");
 
-        YoutubeDLResponse response = null;
-        try {
-            response = YoutubeDL.execute(request);
-            episodeCounter++;
-        } catch (YoutubeDLException e) {
-            LOGGER.severe(e.getMessage());
-            e.printStackTrace();
-            //episodeCounter++;
-        }
+        YoutubeDLResponse response = YoutubeDL.execute(request);
+        episodeCounter++;
 
         if (response.getExitCode() == 0) {
             LOGGER.info("File " + fileName + " downloaded successfully");
@@ -217,7 +215,7 @@ public class EpisodeDownloader {
         //String directory = "/home/ao/Desktop/Test";
 
         //TODO:remove
-       // String directory = "/home/ao/Desktop/Test1";
+        // String directory = "/home/ao/Desktop/Test1";
         String directory = "/Users/AO/Desktop/Test1";
 
         YoutubeDLRequest request = new YoutubeDLRequest(link, directory);
