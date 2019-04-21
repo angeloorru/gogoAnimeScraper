@@ -48,6 +48,7 @@ public class RapidVideo {
                         } catch (YoutubeDLException e) {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
+                            //TODO: Add a counter for terminating all operations if entered in deadlock
                             //Try to use the following service
                             LOGGER.info("[Rapid Video Error]: Sending job to Open Load service");
                             downloadVideoFromWebPageOpenLoad();
@@ -89,6 +90,7 @@ public class RapidVideo {
                         } catch (YoutubeDLException e) {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
+                            //TODO: Add a counter for terminating all operations if entered in deadlock
                             //Use the following service
                             downloadVideoFromWebPageRapidVideo();
                         }
