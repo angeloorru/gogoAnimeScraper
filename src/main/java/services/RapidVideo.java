@@ -36,10 +36,10 @@ public class RapidVideo {
                     doc = Jsoup.connect(url).get();
                     int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
 
-                    Elements elementName = doc.getElementsByClass("rapidvideo");
+                    Elements serviceName = doc.getElementsByClass("rapidvideo");
                     //TODO: Try to merge services together in the same class
-                    if (elementName != null && helpers.isEpisodeAvailable(elementName)) {
-                        Element link = elementName.select("a").first();
+                    if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
+                        Element link = serviceName.select("a").first();
                         String videoLink = link.attr("data-video");
 
                         LOGGER.info("[Rapid Video]: Sending link " + videoLink + " to youtube-dl");
@@ -49,6 +49,7 @@ public class RapidVideo {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
                             //Try to use the following service
+                            LOGGER.info("[Rapid Video Error]: Sending job to Open Load service");
                             downloadVideoFromWebPageOpenLoad();
                         }
                     } else {
@@ -76,10 +77,10 @@ public class RapidVideo {
                     doc = Jsoup.connect(url).get();
                     int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
 
-                    Elements elementName = doc.getElementsByClass("open");
+                    Elements serviceName = doc.getElementsByClass("open");
                     //TODO: Try to merge services together in the same class
-                    if (elementName != null && helpers.isEpisodeAvailable(elementName)) {
-                        Element link = elementName.select("a").first();
+                    if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
+                        Element link = serviceName.select("a").first();
                         String videoLink = link.attr("data-video");
 
                         LOGGER.info("[Open Load]: Sending link " + videoLink + " to youtube-dl");

@@ -20,10 +20,10 @@ import static java.lang.Thread.sleep;
 public class EpisodeDownloader {
 
     private static final Logger LOGGER = Logger.getLogger(EpisodeDownloader.class.getName());
-    private static final String URL_HOME = "https://www2.gogoanime.io/category/mobile-suit-gundam-seed-dub";
-    private static final int FIRST_EPISODE = 47;
+    private static final String URL_HOME = "https://www2.gogoanime.io/category/mobile-fighter-g-gundam-dub";
+    private static final int FIRST_EPISODE = 1;
 
-    public static int episodeCounter = 47;
+    public static int episodeCounter = 1;
 
     private String URL = buildUrlForDownloadByEpisode(URL_HOME);
     private String seriesTitle = extractFileName();
@@ -102,11 +102,11 @@ public class EpisodeDownloader {
      */
     private String buildFileName(String episodeNumber, String seriesTitle, String seriesYear) {
         //TODO:Remove contains() as it is useful only for Gundam
-        if (seriesTitle.contains("Mobile_Suit")) {
-            return seriesTitle + "_Episode-" + episodeNumber + "_(" + seriesYear + ").mp4";
-        } else {
+        //if (seriesTitle.contains("Mobile_Suit")) {
+        return seriesTitle + "_Episode-" + episodeNumber + "_(" + seriesYear + ").mp4";
+        /*} else {
             return "Mobile_Suit_" + seriesTitle + "_Episode-" + episodeNumber + "_(" + seriesYear + ").mp4";
-        }
+        }*/
     }
 
     /**
