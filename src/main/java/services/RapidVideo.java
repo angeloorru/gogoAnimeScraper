@@ -9,7 +9,7 @@ import org.jsoup.select.Elements;
 import video_file_downloader.EpisodeDownloader;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -17,19 +17,20 @@ public class RapidVideo {
 
     private static final Logger LOGGER = Logger.getLogger(RapidVideo.class.getName());
 
-    EpisodeDownloader episodeProcessor = new EpisodeDownloader();
-    Helpers helpers = new Helpers();
-
-    private List<String> urlList = new ArrayList<>();
+    private EpisodeDownloader episodeProcessor = new EpisodeDownloader();
+    private List<String> urlList = episodeProcessor.constructUrlForRequest();
+    private Helpers helpers = new Helpers();
 
     /**
      * @desc Parses the gogo anime page and extracts url video links from Rapid Video
      * for making the request with youtube-dl.
      */
     public void downloadVideoFromWebPageRapidVideo() {
-        urlList = episodeProcessor.constructUrlForRequest();
+        Iterator<String> iterator = urlList.iterator();
 
-        urlList.forEach(url -> {
+        while (iterator.hasNext()) {
+            String url = iterator.next();
+
             if (helpers.isValidUrl(url)) {
                 Document doc;
 
@@ -46,6 +47,8 @@ public class RapidVideo {
                         LOGGER.info("[Rapid Video]: Sending link " + videoLink + " to youtube-dl");
                         try {
                             episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
+                            //Shared list must be kept up to date. If done with the url, remove it.
+                            iterator.remove();
                         } catch (YoutubeDLException e) {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
@@ -64,15 +67,19 @@ public class RapidVideo {
                     LOGGER.severe("[Message]: " + e.getMessage());
                 }
             }
-        });
+        }
     }
 
     /**
      * @desc Parses the gogo anime page and extracts url video links from Open Load
      * for making the request with youtube-dl.
      */
-    public void downloadVideoFromWebPageOpenLoad() {
-        urlList.forEach(url -> {
+    private void downloadVideoFromWebPageOpenLoad() {
+        Iterator<String> iterator = urlList.iterator();
+
+        while (iterator.hasNext()) {
+            String url = iterator.next();
+
             if (helpers.isValidUrl(url)) {
                 Document doc;
 
@@ -83,12 +90,63 @@ public class RapidVideo {
                     Elements serviceName = doc.getElementsByClass("open");
                     //TODO: Try to merge services together in the same class
                     if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
-                        Element link = serviceName.select("a").first();
+                        Element link = serviceName.select("a").last();
                         String videoLink = link.attr("data-video");
 
                         LOGGER.info("[Open Load]: Sending link " + videoLink + " to youtube-dl");
                         try {
                             episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
+                            //Shared list must be kept up to date. If done with the url, remove it.
+                            iterator.remove();
+                        } catch (YoutubeDLException e) {
+                            LOGGER.severe(e.getMessage());
+                            e.printStackTrace();
+                            //TODO: Add a counter for terminating all operations if entered in deadlock
+                            //Use the following service
+                            downloadVideoFromWebPageStreamMango();
+                        }
+                    } else {
+                        //TODO:Log missing episode to a text file: errors.txt
+                        //This block skips the call to downloadVideoWithYouTubeDl() hence
+                        //episodeCounter in EpisodeDownloader is ++ anyway
+                        System.out.println("File is missing. Need a log text file");
+                    }
+                } catch (IOException e) {
+                    LOGGER.severe("[Message]: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * @desc Parses the gogo anime page and extracts url video links from StreamMango
+     * for making the request with youtube-dl.
+     */
+    private void downloadVideoFromWebPageStreamMango() {
+        Iterator<String> iterator = urlList.iterator();
+
+        while (iterator.hasNext()) {
+            String url = iterator.next();
+
+            if (helpers.isValidUrl(url)) {
+                Document doc;
+
+                try {
+                    doc = Jsoup.connect(url).get();
+                    int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
+
+                    Elements serviceName = doc.getElementsByClass("streamango");
+                    //TODO: Try to merge services together in the same class
+                    if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
+                        Element link = serviceName.select("a").first();
+                        String videoLink = link.attr("data-video");
+
+                        LOGGER.info("[Stream Mango]: Sending link " + videoLink + " to youtube-dl");
+                        try {
+                            episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
+                            //Shared list must be kept up to date. If done with the url, remove it.
+                            iterator.remove();
                         } catch (YoutubeDLException e) {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
@@ -107,6 +165,6 @@ public class RapidVideo {
                     e.printStackTrace();
                 }
             }
-        });
+        }
     }
 }
