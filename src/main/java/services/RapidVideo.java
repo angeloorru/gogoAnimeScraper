@@ -28,7 +28,8 @@ public class RapidVideo {
      */
     public void downloadVideoFromWebPageRapidVideo() {
         urlList = episodeProcessor.constructUrlForRequest();
-        for (String url : urlList) {
+
+        urlList.forEach(url -> {
             if (helpers.isValidUrl(url)) {
                 Document doc;
 
@@ -63,7 +64,7 @@ public class RapidVideo {
                     LOGGER.severe("[Message]: " + e.getMessage());
                 }
             }
-        }
+        });
     }
 
     /**
@@ -72,7 +73,8 @@ public class RapidVideo {
      */
     public void downloadVideoFromWebPageOpenLoad() {
         urlList = episodeProcessor.constructUrlForRequest();
-        for (String url : urlList) {
+
+        urlList.forEach(url -> {
             if (helpers.isValidUrl(url)) {
                 Document doc;
 
@@ -107,6 +109,6 @@ public class RapidVideo {
                     e.printStackTrace();
                 }
             }
-        }
+        });
     }
 }
