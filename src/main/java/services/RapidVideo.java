@@ -58,6 +58,8 @@ public class RapidVideo {
                         System.out.println("File is missing. Need a log text file");
                     }
                 } catch (IOException e) {
+                    //We skip the call to downloadVideoWithYouTubeDl() hence
+                    // episodeCounter in EpisodeDownloader is ++ anyway
                     LOGGER.severe("[Message]: " + e.getMessage());
                 }
             }
