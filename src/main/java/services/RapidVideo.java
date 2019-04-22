@@ -58,7 +58,7 @@ public class RapidVideo {
                         System.out.println("File is missing. Need a log text file");
                     }
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOGGER.severe("[Message]: " + e.getMessage());
                 }
             }
         }
@@ -99,6 +99,7 @@ public class RapidVideo {
                         System.out.println("File is missing. Need a log text file");
                     }
                 } catch (IOException e) {
+                    LOGGER.severe("[Message]: " + e.getMessage());
                     e.printStackTrace();
                 }
             }
