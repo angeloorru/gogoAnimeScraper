@@ -72,8 +72,6 @@ public class RapidVideo {
      * for making the request with youtube-dl.
      */
     public void downloadVideoFromWebPageOpenLoad() {
-        urlList = episodeProcessor.constructUrlForRequest();
-
         urlList.forEach(url -> {
             if (helpers.isValidUrl(url)) {
                 Document doc;
