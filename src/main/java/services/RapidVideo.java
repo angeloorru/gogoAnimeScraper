@@ -39,7 +39,7 @@ public class RapidVideo {
                     int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
 
                     Elements serviceName = doc.getElementsByClass("rapidvideo");
-                    //TODO: Try to merge services together in the same class
+
                     if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
                         Element link = serviceName.select("a").first();
                         String videoLink = link.attr("data-video");
@@ -53,7 +53,6 @@ public class RapidVideo {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
                             //TODO: Add a counter for terminating all operations if entered in deadlock
-                            //Try to use the following service
                             LOGGER.info("[Rapid Video Error]: Sending job to Open Load service");
                             downloadVideoFromWebPageOpenLoad();
                         }
@@ -88,7 +87,7 @@ public class RapidVideo {
                     int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
 
                     Elements serviceName = doc.getElementsByClass("open");
-                    //TODO: Try to merge services together in the same class
+
                     if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
                         Element link = serviceName.select("a").last();
                         String videoLink = link.attr("data-video");
@@ -102,7 +101,7 @@ public class RapidVideo {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
                             //TODO: Add a counter for terminating all operations if entered in deadlock
-                            //Use the following service
+                            LOGGER.info("[Open Load Error]: Sending job to Stream Mango service");
                             downloadVideoFromWebPageStreamMango();
                         }
                     } else {
@@ -137,7 +136,7 @@ public class RapidVideo {
                     int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
 
                     Elements serviceName = doc.getElementsByClass("streamango");
-                    //TODO: Try to merge services together in the same class
+
                     if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
                         Element link = serviceName.select("a").first();
                         String videoLink = link.attr("data-video");
@@ -151,7 +150,7 @@ public class RapidVideo {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
                             //TODO: Add a counter for terminating all operations if entered in deadlock
-                            //Use the following service
+                            LOGGER.info("[Stream Mango]: Sending job to Rapid Video service");
                             downloadVideoFromWebPageRapidVideo();
                         }
                     } else {
