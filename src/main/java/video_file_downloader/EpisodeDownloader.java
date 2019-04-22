@@ -32,8 +32,11 @@ public class EpisodeDownloader {
     public static int episodeCounter = 1;
 
     private String URL = buildUrlForDownloadByEpisode(URL_HOME);
-    private String seriesTitle = extractFileName();
+    private String seriesTitle = extractFileNameFromHtmlPage();
     private String seriesYear = extractYear();
+    private String folderName = buildFolderNameFromHtmlPage();
+    private final String directory = buildDownloadDirectory();
+
     private int totalNumberOfEpisodes = getTotalNumberOfEpisodeFromHtmlPage();
 
     /**
@@ -151,9 +154,38 @@ public class EpisodeDownloader {
 
     /**
      * @return
+     * @desc Builds the folder name from the episode title.
+     */
+    private String buildFolderNameFromHtmlPage() {
+        String folderName = null;
+        Document doc;
+
+        LOGGER.info("Attempting to build the folder name");
+        try {
+            doc = Jsoup.connect(URL_HOME).get();
+
+            Elements productName = doc.getElementsByClass("anime_info_body_bg");
+            String htmlTitle = productName.select("h1").first().toString();
+
+            doc = Jsoup.parse(htmlTitle);
+
+            folderName = doc.body().text();
+            folderName = folderName.replace(" (Dub)", "");
+            folderName = folderName.replaceAll(": ", ":");
+            folderName = folderName + " (" + seriesYear + ")";
+        } catch (IOException e) {
+            e.getMessage();
+        }
+        LOGGER.info("Folder name [" + folderName + "] built");
+
+        return folderName;
+    }
+
+    /**
+     * @return
      * @desc Extracts the file name by scraping the html page
      */
-    private String extractFileName() {
+    private String extractFileNameFromHtmlPage() {
         String title = null;
         Document doc;
 
@@ -217,11 +249,8 @@ public class EpisodeDownloader {
      * Allow to setup error handlers, file name and number of re-tries
      */
     private YoutubeDLRequest buildYoutubeDLRequest(String link, String fileName) {
-        //TODO: Remove when file name is automatically generated.
-        //String directory = buildDownloadDirectory();
-
         //TODO:remove
-         String directory = "/Users/AO/Desktop/Test1";
+        String directory = "/Users/AO/Desktop/Test1";
 
         YoutubeDLRequest request = new YoutubeDLRequest(link, directory);
 
@@ -233,8 +262,8 @@ public class EpisodeDownloader {
     }
 
     /**
-     * Build the file path and folder name.
      * @return
+     * @desc Build the file path and folder name.
      */
     private String buildDownloadDirectory() {
         String workingDirectory = System.getProperty("user.dir");
@@ -252,12 +281,14 @@ public class EpisodeDownloader {
                     endpoint[2] + SEPARATOR_WINDOWS + DESTINATION_PATH + SEPARATOR_WINDOWS;
         }
 
-        //TODO: Automate folder creation based on series Name
+        //File destinationFolder = new File(pathToSaveDownloadedFile + folderName);
+
+        //TODO: Remove
         File destinationFolder = new File(pathToSaveDownloadedFile + "Test1");
 
         if (!destinationFolder.exists()) {
             destinationFolder.mkdir();
         }
-        return pathToSaveDownloadedFile;
+        return destinationFolder.toString();
     }
 }
