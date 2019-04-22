@@ -217,10 +217,11 @@ public class EpisodeDownloader {
      * Allow to setup error handlers, file name and number of re-tries
      */
     private YoutubeDLRequest buildYoutubeDLRequest(String link, String fileName) {
-        String directory = buildDownloadDirectory();
+        //TODO: Remove when file name is automatically generated.
+        //String directory = buildDownloadDirectory();
 
         //TODO:remove
-        // String directory = "/Users/AO/Desktop/Test1";
+         String directory = "/Users/AO/Desktop/Test1";
 
         YoutubeDLRequest request = new YoutubeDLRequest(link, directory);
 
@@ -232,7 +233,7 @@ public class EpisodeDownloader {
     }
 
     /**
-     * Build the file path and folder name
+     * Build the file path and folder name.
      * @return
      */
     private String buildDownloadDirectory() {
