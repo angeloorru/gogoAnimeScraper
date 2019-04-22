@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,11 @@ public class EpisodeDownloader {
     private static final Logger LOGGER = Logger.getLogger(EpisodeDownloader.class.getName());
     private static final String URL_HOME = "https://www2.gogoanime.io/category/mobile-fighter-g-gundam-dub";
     private static final int FIRST_EPISODE = 1;
+
+    private static final String DESTINATION_PATH = "Desktop";
+    private static final String SEPARATOR_UNIX = "/";
+    private static final String SEPARATOR_WINDOWS = "\\";
+    private static final String OPERATING_SYSTEM = System.getProperty("os.name").toLowerCase();
 
     public static int episodeCounter = 1;
 
@@ -211,12 +217,10 @@ public class EpisodeDownloader {
      * Allow to setup error handlers, file name and number of re-tries
      */
     private YoutubeDLRequest buildYoutubeDLRequest(String link, String fileName) {
-        //TODO: Automate folder creation based on OS environment
-        //String directory = "/home/ao/Desktop/Test";
+        String directory = buildDownloadDirectory();
 
         //TODO:remove
-        // String directory = "/home/ao/Desktop/Test1";
-        String directory = "/Users/AO/Desktop/Test1";
+        // String directory = "/Users/AO/Desktop/Test1";
 
         YoutubeDLRequest request = new YoutubeDLRequest(link, directory);
 
@@ -225,5 +229,28 @@ public class EpisodeDownloader {
         request.setOption("retries", 10);
 
         return request;
+    }
+
+    private String buildDownloadDirectory() {
+        String workingDirectory = System.getProperty("user.dir");
+        String absoluteFilePath = workingDirectory + File.separator;
+
+        String[] endpoint = absoluteFilePath.split("/");
+        String pathToSaveDownloadedFile;
+
+        if (OPERATING_SYSTEM.contains("mac") || OPERATING_SYSTEM.contains("linux")) {
+            pathToSaveDownloadedFile = SEPARATOR_UNIX + endpoint[1] + SEPARATOR_UNIX +
+                    endpoint[2] + SEPARATOR_UNIX + DESTINATION_PATH + SEPARATOR_UNIX;
+        } else {
+            pathToSaveDownloadedFile = SEPARATOR_WINDOWS + endpoint[1] + SEPARATOR_WINDOWS +
+                    endpoint[2] + SEPARATOR_WINDOWS + DESTINATION_PATH + SEPARATOR_WINDOWS;
+        }
+
+        File destinationFolder = new File(pathToSaveDownloadedFile + "Test1");
+
+        if (!destinationFolder.exists()) {
+            destinationFolder.mkdir();
+        }
+        return pathToSaveDownloadedFile;
     }
 }
