@@ -231,6 +231,10 @@ public class EpisodeDownloader {
         return request;
     }
 
+    /**
+     * Build the file path and folder name
+     * @return
+     */
     private String buildDownloadDirectory() {
         String workingDirectory = System.getProperty("user.dir");
         String absoluteFilePath = workingDirectory + File.separator;
@@ -247,6 +251,7 @@ public class EpisodeDownloader {
                     endpoint[2] + SEPARATOR_WINDOWS + DESTINATION_PATH + SEPARATOR_WINDOWS;
         }
 
+        //TODO: Automate folder creation based on series Name
         File destinationFolder = new File(pathToSaveDownloadedFile + "Test1");
 
         if (!destinationFolder.exists()) {
