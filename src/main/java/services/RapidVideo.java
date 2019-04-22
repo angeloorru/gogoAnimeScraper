@@ -55,11 +55,11 @@ public class RapidVideo {
                         }
                     } else {
                         //TODO:Log missing episode to a text file: errors.txt
+                        //This block skips the call to downloadVideoWithYouTubeDl() hence
+                        //episodeCounter in EpisodeDownloader is ++ anyway
                         System.out.println("File is missing. Need a log text file");
                     }
                 } catch (IOException e) {
-                    //We skip the call to downloadVideoWithYouTubeDl() hence
-                    // episodeCounter in EpisodeDownloader is ++ anyway
                     LOGGER.severe("[Message]: " + e.getMessage());
                 }
             }
@@ -98,6 +98,8 @@ public class RapidVideo {
                         }
                     } else {
                         //TODO:Log missing episode to a text file: errors.txt
+                        //This block skips the call to downloadVideoWithYouTubeDl() hence
+                        //episodeCounter in EpisodeDownloader is ++ anyway
                         System.out.println("File is missing. Need a log text file");
                     }
                 } catch (IOException e) {

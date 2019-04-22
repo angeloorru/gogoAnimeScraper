@@ -249,9 +249,6 @@ public class EpisodeDownloader {
      * Allow to setup error handlers, file name and number of re-tries
      */
     private YoutubeDLRequest buildYoutubeDLRequest(String link, String fileName) {
-        //TODO:remove
-        String directory = "/Users/AO/Desktop/Test1";
-
         YoutubeDLRequest request = new YoutubeDLRequest(link, directory);
 
         request.setOption("ignore-errors");
@@ -272,7 +269,7 @@ public class EpisodeDownloader {
         String[] endpoint = absoluteFilePath.split("/");
         String pathToSaveDownloadedFile;
 
-        //TODO: Need testing for Win and Linux
+        //TODO: Need testing for Windows
         if (OPERATING_SYSTEM.contains("mac") || OPERATING_SYSTEM.contains("linux")) {
             pathToSaveDownloadedFile = SEPARATOR_UNIX + endpoint[1] + SEPARATOR_UNIX +
                     endpoint[2] + SEPARATOR_UNIX + DESTINATION_PATH + SEPARATOR_UNIX;
@@ -281,10 +278,7 @@ public class EpisodeDownloader {
                     endpoint[2] + SEPARATOR_WINDOWS + DESTINATION_PATH + SEPARATOR_WINDOWS;
         }
 
-        //File destinationFolder = new File(pathToSaveDownloadedFile + folderName);
-
-        //TODO: Remove
-        File destinationFolder = new File(pathToSaveDownloadedFile + "Test1");
+        File destinationFolder = new File(pathToSaveDownloadedFile + folderName);
 
         if (!destinationFolder.exists()) {
             destinationFolder.mkdir();
