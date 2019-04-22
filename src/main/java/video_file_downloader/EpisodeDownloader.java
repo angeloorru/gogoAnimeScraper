@@ -238,6 +238,7 @@ public class EpisodeDownloader {
         String[] endpoint = absoluteFilePath.split("/");
         String pathToSaveDownloadedFile;
 
+        //TODO: Need testing for Win and Linux
         if (OPERATING_SYSTEM.contains("mac") || OPERATING_SYSTEM.contains("linux")) {
             pathToSaveDownloadedFile = SEPARATOR_UNIX + endpoint[1] + SEPARATOR_UNIX +
                     endpoint[2] + SEPARATOR_UNIX + DESTINATION_PATH + SEPARATOR_UNIX;
