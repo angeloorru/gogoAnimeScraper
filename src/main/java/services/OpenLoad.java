@@ -47,7 +47,7 @@ public class OpenLoad extends Service {
                             deadlockCounter++;
 
                             if(deadlockCounter == 3){
-                                LOGGER.severe("[Rapid Video]: Deadlock occurred");
+                                LOGGER.severe("[Open Load]: Deadlock occurred");
                                 System.exit(0);
                             }
 

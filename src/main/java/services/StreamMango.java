@@ -47,7 +47,7 @@ public class StreamMango extends Service {
                             deadlockCounter++;
 
                             if(deadlockCounter == 3){
-                                LOGGER.severe("[Rapid Video]: Deadlock occurred");
+                                LOGGER.severe("[Stream Mango]: Deadlock occurred");
                                 System.exit(0);
                             }
 
