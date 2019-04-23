@@ -80,8 +80,8 @@ public class EpisodeDownloader {
             LOGGER.info("File " + fileName + " downloaded successfully");
             if (Integer.valueOf(episodeNumber) < totalNumberOfEpisodes) {
                 try {
-                    LOGGER.info("Pausing for 15 seconds now...");
-                    sleep(15000);
+                    LOGGER.info("Pausing for 20 seconds now...");
+                    sleep(20000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
