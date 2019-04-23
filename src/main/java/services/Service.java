@@ -50,7 +50,9 @@ public class Service {
                         try {
                             episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
                             //Shared list must be kept up to date. If done with the url, remove it.
-                            iterator.remove();
+                            if(urlList.size() > 1){
+                                iterator.remove();
+                            }
                         } catch (YoutubeDLException e) {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
@@ -104,7 +106,9 @@ public class Service {
                         try {
                             episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
                             //Shared list must be kept up to date. If done with the url, remove it.
-                            iterator.remove();
+                            if(urlList.size() > 1){
+                                iterator.remove();
+                            }
                         } catch (YoutubeDLException e) {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
@@ -158,7 +162,9 @@ public class Service {
                         try {
                             episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
                             //Shared list must be kept up to date. If done with the url, remove it.
-                            iterator.remove();
+                            if(urlList.size() > 1){
+                                iterator.remove();
+                            }
                         } catch (YoutubeDLException e) {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
@@ -211,7 +217,9 @@ public class Service {
                         try {
                             episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
                             //Shared list must be kept up to date. If done with the url, remove it.
-                            iterator.remove();
+                            if(urlList.size() > 1){
+                                iterator.remove();
+                            }
                         } catch (YoutubeDLException e) {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
