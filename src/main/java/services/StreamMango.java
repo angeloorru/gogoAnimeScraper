@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 public class StreamMango extends Service {
     private static final Logger LOGGER = Logger.getLogger(StreamMango.class.getName());
 
+    private int deadlockCounter;
+
     @Override
     public void downloadVideoUsingService() {
         Iterator<String> iterator = urlList.iterator();
@@ -41,11 +43,17 @@ public class StreamMango extends Service {
                         } catch (YoutubeDLException e) {
                             LOGGER.severe(e.getMessage());
                             e.printStackTrace();
-                            //TODO: Add a counter for terminating all operations if entered in deadlock
+
                             deadlockCounter++;
+
+                            if(deadlockCounter == 3){
+                                LOGGER.severe("[Rapid Video]: Deadlock occurred");
+                                System.exit(0);
+                            }
+
                             //Try to use the following service
                             LOGGER.info("[Stream Mango Error]: Sending job to Open Load service");
-                            Rapid rapidVideo = new Rapid();
+                            RapidVideo rapidVideo = new RapidVideo();
                             rapidVideo.downloadVideoUsingService();
                         }
                     } else {

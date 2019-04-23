@@ -1,8 +1,8 @@
-import services.Rapid;
+import services.RapidVideo;
 
 public class RunGoGoAnimeScraper {
     public static void main(String[] args) {
-        Rapid rapidVideoService = new Rapid();
+        RapidVideo rapidVideoService = new RapidVideo();
         rapidVideoService.downloadVideoUsingService();
     }
 }

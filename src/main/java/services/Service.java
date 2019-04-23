@@ -10,7 +10,6 @@ abstract class Service {
     EpisodeDownloader downloader = new EpisodeDownloader();
     List<String> urlList = downloader.constructUrlForRequest();
     Helpers helpers = new Helpers();
-    static int deadlockCounter = 0;
 
     abstract void downloadVideoUsingService();
 }
