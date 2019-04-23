@@ -23,13 +23,12 @@ public class EpisodeDownloader {
     private static final Logger LOGGER = Logger.getLogger(EpisodeDownloader.class.getName());
     private static final String URL_HOME = "https://www2.gogoanime.io/category/mobile-suit-gundam-thunderbolt-bandit-flower";
     private static final int FIRST_EPISODE = 1;
-
     private static final String DESTINATION_PATH = "Desktop";
     private static final String SEPARATOR_UNIX = "/";
     private static final String SEPARATOR_WINDOWS = "\\";
     private static final String OPERATING_SYSTEM = System.getProperty("os.name").toLowerCase();
 
-    public static int episodeCounter = 1;
+    private static int episodeCounter = 1;
 
     private String URL = buildUrlForDownloadByEpisode(URL_HOME);
     private String seriesTitle = extractFileNameFromHtmlPage();

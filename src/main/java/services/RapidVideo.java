@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
+@Deprecated
 public class RapidVideo {
 
     private static final Logger LOGGER = Logger.getLogger(RapidVideo.class.getName());
