@@ -60,8 +60,8 @@ public class Service {
                                 System.exit(0);
                             }
 
-                            LOGGER.info("[Rapid Video Error]: Sending job to Open Load service");
-                            downloadVideoFromWebPageOpenLoad();
+                            LOGGER.info("[Rapid Video Error]: Sending job to Open Load First service");
+                            downloadVideoFromWebPageOpenLoadFirst();
                         }
                     } else {
                         //TODO:Log missing episode to a text file: errors.txt
@@ -77,10 +77,64 @@ public class Service {
     }
 
     /**
-     * @desc Parses the gogo anime page and extracts url video links from Open Load
+     * @desc Parses the gogo anime page and extracts url video links from Open Load first link
      * for making the request with youtube-dl.
      */
-    private void downloadVideoFromWebPageOpenLoad() {
+    private void downloadVideoFromWebPageOpenLoadFirst() {
+        Iterator<String> iterator = urlList.iterator();
+
+        while (iterator.hasNext()) {
+            String url = iterator.next();
+
+            if (helpers.isValidUrl(url)) {
+                Document doc;
+
+                try {
+                    doc = Jsoup.connect(url).get();
+                    int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
+
+                    Elements serviceName = doc.getElementsByClass("open");
+
+                    if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
+                        Element link = serviceName.select("a").first();
+                        String videoLink = link.attr("data-video");
+
+                        LOGGER.info("[Open Load]: Sending link " + videoLink + " to youtube-dl");
+                        try {
+                            episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
+                            //Shared list must be kept up to date. If done with the url, remove it.
+                            iterator.remove();
+                        } catch (YoutubeDLException e) {
+                            LOGGER.severe(e.getMessage());
+                            e.printStackTrace();
+
+                            if (deadlockCounter == 3) {
+                                LOGGER.severe("[Open Load]: Deadlock occurred");
+                                System.exit(0);
+                            }
+
+                            LOGGER.info("[Open Load Error]: Sending job to Open Load Second service");
+                            downloadVideoFromWebPageOpenLoadSecond();
+                        }
+                    } else {
+                        //TODO:Log missing episode to a text file: errors.txt
+                        //This block skips the call to downloadVideoWithYouTubeDl() hence
+                        //episodeCounter in EpisodeDownloader is ++ anyway
+                        System.out.println("File is missing. Need a log text file");
+                    }
+                } catch (IOException e) {
+                    LOGGER.severe("[Message]: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * @desc Parses the gogo anime page and extracts url video links from Open Load first link
+     * for making the request with youtube-dl.
+     */
+    private void downloadVideoFromWebPageOpenLoadSecond() {
         Iterator<String> iterator = urlList.iterator();
 
         while (iterator.hasNext()) {
