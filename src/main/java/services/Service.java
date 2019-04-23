@@ -99,7 +99,7 @@ public class Service {
                         Element link = serviceName.select("a").first();
                         String videoLink = link.attr("data-video");
 
-                        LOGGER.info("[Open Load]: Sending link " + videoLink + " to youtube-dl");
+                        LOGGER.info("[Open Load First]: Sending link " + videoLink + " to youtube-dl");
                         try {
                             episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
                             //Shared list must be kept up to date. If done with the url, remove it.
@@ -109,11 +109,11 @@ public class Service {
                             e.printStackTrace();
 
                             if (deadlockCounter == 3) {
-                                LOGGER.severe("[Open Load]: Deadlock occurred");
+                                LOGGER.severe("[Open Load First]: Deadlock occurred");
                                 System.exit(0);
                             }
 
-                            LOGGER.info("[Open Load Error]: Sending job to Open Load Second service");
+                            LOGGER.info("[Open Load First Error]: Sending job to Open Load Second service");
                             downloadVideoFromWebPageOpenLoadSecond();
                         }
                     } else {
@@ -153,7 +153,7 @@ public class Service {
                         Element link = serviceName.select("a").last();
                         String videoLink = link.attr("data-video");
 
-                        LOGGER.info("[Open Load]: Sending link " + videoLink + " to youtube-dl");
+                        LOGGER.info("[Open Load Second]: Sending link " + videoLink + " to youtube-dl");
                         try {
                             episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
                             //Shared list must be kept up to date. If done with the url, remove it.
@@ -163,11 +163,11 @@ public class Service {
                             e.printStackTrace();
 
                             if (deadlockCounter == 3) {
-                                LOGGER.severe("[Open Load]: Deadlock occurred");
+                                LOGGER.severe("[Open Load Second]: Deadlock occurred");
                                 System.exit(0);
                             }
 
-                            LOGGER.info("[Open Load Error]: Sending job to Stream Mango service");
+                            LOGGER.info("[Open Load Second Error]: Sending job to Stream Mango service");
                             downloadVideoFromWebPageStreamMango();
                         }
                     } else {
