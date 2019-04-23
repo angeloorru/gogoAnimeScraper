@@ -56,7 +56,7 @@ public class Service {
                             e.printStackTrace();
 
                             if (deadlockCounter == 3) {
-                                LOGGER.severe("[Stream Mango]: Deadlock occurred");
+                                LOGGER.severe("[Rapid Video]: Deadlock occurred");
                                 System.exit(0);
                             }
 
@@ -109,7 +109,7 @@ public class Service {
                             e.printStackTrace();
 
                             if (deadlockCounter == 3) {
-                                LOGGER.severe("[Stream Mango]: Deadlock occurred");
+                                LOGGER.severe("[Open Load]: Deadlock occurred");
                                 System.exit(0);
                             }
 
