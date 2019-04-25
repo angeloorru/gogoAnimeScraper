@@ -21,7 +21,7 @@ import static java.lang.Thread.sleep;
 public class EpisodeDownloader {
 
     private static final Logger LOGGER = Logger.getLogger(EpisodeDownloader.class.getName());
-    private static final String URL_HOME = "https://www2.gogoanime.io/category/gundam-g-no-reconguista";
+    private static final String URL_HOME = "https://www2.gogoanime.io/category/gundam-build-fighters-dub";
     private static final int FIRST_EPISODE = 1;
     private static final String DESTINATION_PATH = "Desktop";
     private static final String SEPARATOR_UNIX = "/";
@@ -109,7 +109,7 @@ public class EpisodeDownloader {
      * @desc Build the file name
      */
     private String buildFileName(String episodeNumber, String seriesTitle, String seriesYear) {
-        return Integer.valueOf(episodeNumber) > 1 ?
+        return Integer.valueOf(episodeNumber) >= 1 ?
                 seriesTitle + "_Episode-" + episodeNumber + "_(" + seriesYear + ").mp4" :
                 seriesTitle + "_(" + seriesYear + ").mp4";
     }
