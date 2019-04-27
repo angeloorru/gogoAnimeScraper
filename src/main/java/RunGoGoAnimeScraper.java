@@ -9,7 +9,7 @@ public class RunGoGoAnimeScraper {
         System.out.println("*****************************************************\n");
 
         Service service = new Service();
-        service.downloadVideoFromWebPageOpenLoadFirst();
+        service.downloadVideoFromWebPageRapidVideo();
 
         System.out.println("*******************************************");
         System.out.println("\n\n All files saved in the Desktop folder.");

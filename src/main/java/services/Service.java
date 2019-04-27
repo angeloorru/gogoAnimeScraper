@@ -27,7 +27,7 @@ public class Service {
      * @desc Parses the gogo anime page and extracts url video links from Open Load first link
      * for making the request with youtube-dl.
      */
-    public void downloadVideoFromWebPageOpenLoadFirst() {
+   /* public void downloadVideoFromWebPageOpenLoadFirst() {
         Iterator<String> iterator = urlList.iterator();
 
         while (iterator.hasNext()) {
@@ -75,13 +75,13 @@ public class Service {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     /**
      * @desc Parses the gogo anime page and extracts url video links from Open Load first link
      * for making the request with youtube-dl.
      */
-    private void downloadVideoFromWebPageOpenLoadSecond() {
+   /* private void downloadVideoFromWebPageOpenLoadSecond() {
         Iterator<String> iterator = urlList.iterator();
 
         while (iterator.hasNext()) {
@@ -129,13 +129,13 @@ public class Service {
                 e.printStackTrace();
             }
         }
-    }
+    }*/
 
     /**
      * @desc Parses the gogo anime page and extracts url video links from Rapid Video
      * for making the request with youtube-dl.
      */
-    private void downloadVideoFromWebPageRapidVideo() {
+    public void downloadVideoFromWebPageRapidVideo() {
         Iterator<String> iterator = urlList.iterator();
 
         while (iterator.hasNext()) {
@@ -223,7 +223,7 @@ public class Service {
                         }
 
                         LOGGER.info("[Stream Mango]: Sending job to Open Load First service");
-                        downloadVideoFromWebPageOpenLoadFirst();
+                        downloadVideoFromWebPageRapidVideo();
                     }
                 } else {
                     //TODO:Log missing episode to a text file: errors.txt
