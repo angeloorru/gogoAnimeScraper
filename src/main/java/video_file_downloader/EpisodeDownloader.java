@@ -154,24 +154,14 @@ public class EpisodeDownloader {
      */
     private String buildFolderNameFromHtmlPage() {
         String folderName = null;
-        Document doc;
+        try {
+            folderName = getInfoForTitleAndFolder();
+        } catch (IOException e) {
+            LOGGER.severe(e.getMessage());
+        }
 
         LOGGER.info("Attempting to build the folder name");
-        try {
-            doc = Jsoup.connect(URL_HOME).get();
-
-            Elements productName = doc.getElementsByClass("anime_info_body_bg");
-            String htmlTitle = productName.select("h1").first().toString();
-
-            doc = Jsoup.parse(htmlTitle);
-
-            folderName = doc.body().text();
-            folderName = folderName.replace(" (Dub)", "");
-            folderName = folderName.replaceAll(": ", ":");
-            folderName = folderName + " (" + seriesYear + ")";
-        } catch (IOException e) {
-            e.getMessage();
-        }
+        folderName = folderName + " (" + seriesYear + ")";
         LOGGER.info("Folder name [" + folderName + "] built");
 
         return folderName;
@@ -183,25 +173,36 @@ public class EpisodeDownloader {
      */
     private String extractFileNameFromHtmlPage() {
         String title = null;
-        Document doc;
-
-        LOGGER.info("Attempting to build the file title");
         try {
-            doc = Jsoup.connect(URL_HOME).get();
-
-            Elements productName = doc.getElementsByClass("anime_info_body_bg");
-            String htmlTitle = productName.select("h1").first().toString();
-
-            doc = Jsoup.parse(htmlTitle);
-
-            title = doc.body().text();
-            title = title.replace(" (Dub)", "");
-            title = title.replaceAll(": ", ":");
-            title = title.replace(" ", "_");
+            title = getInfoForTitleAndFolder();
         } catch (IOException e) {
-            e.getMessage();
+            LOGGER.severe(e.getMessage());
         }
+        LOGGER.info("Attempting to build the file title");
+        title = title.replace(" ", "_");
         LOGGER.info("File tile [" + title + "] built");
+        return title;
+    }
+
+    /**
+     * @desc Scraps tags content useful for building the file name and folder's name
+     * @return
+     * @throws IOException
+     */
+    private String getInfoForTitleAndFolder() throws IOException {
+        Document doc;
+        String title;
+
+        doc = Jsoup.connect(URL_HOME).get();
+
+        Elements productName = doc.getElementsByClass("anime_info_body_bg");
+        String htmlTitle = productName.select("h1").first().toString();
+
+        doc = Jsoup.parse(htmlTitle);
+
+        title = doc.body().text();
+        title = title.replace(" (Dub)", "");
+        title = title.replaceAll(": ", ":");
         return title;
     }
 
