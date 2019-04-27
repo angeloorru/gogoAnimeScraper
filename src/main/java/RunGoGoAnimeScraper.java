@@ -7,7 +7,6 @@ public class RunGoGoAnimeScraper {
         System.out.println("*****************************************************\n");
         System.out.println("Welcome to Go Go Anime Downloader Application\n");
         System.out.println("*****************************************************\n");
-        System.out.println("A program written in Java by Angelo Orru :-)\n");
 
         Service service = new Service();
         service.downloadVideoFromWebPageOpenLoadFirst();
