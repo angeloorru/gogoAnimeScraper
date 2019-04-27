@@ -20,7 +20,7 @@ Mac:
 Windows:
 <ul>
 <li>Install choco in Windows: https://jcutrer.com/windows/install-chocolatey-choco-windows10
-<li>choco install -y youtube-dl ffmpeg
+<li>Then open terminal and type: choco install -y youtube-dl ffmpeg
 </ul>
 
 <h2>Program Execution</h2>
