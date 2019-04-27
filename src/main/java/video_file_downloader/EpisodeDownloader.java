@@ -21,7 +21,7 @@ import static java.lang.Thread.sleep;
 public class EpisodeDownloader {
 
     private static final Logger LOGGER = Logger.getLogger(EpisodeDownloader.class.getName());
-    private static final String URL_HOME = "https://www2.gogoanime.io/category/gundam-build-fighters-dub";
+    private static final String URL_HOME = "https://www2.gogoanime.io/category/detective-conan";
     private static final int FIRST_EPISODE = 1;
     private static final String DESTINATION_PATH = "Desktop";
     private static final String SEPARATOR_UNIX = "/";
@@ -125,7 +125,7 @@ public class EpisodeDownloader {
             doc = Jsoup.connect(URL_HOME).get();
 
             Elements videoBody = doc.getElementsByClass("anime_video_body");
-            Element hrefContainer = videoBody.select("a").first();
+            Element hrefContainer = videoBody.select("a").last();
             lastEpisode = Integer.valueOf(hrefContainer.attr("ep_end"));
 
         } catch (IOException e) {
