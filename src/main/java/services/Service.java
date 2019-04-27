@@ -354,7 +354,6 @@ public class Service {
                 }
             } catch (IOException e) {
                 LOGGER.severe("[Message]: " + e.getMessage());
-                e.printStackTrace();
             }
         }
     }

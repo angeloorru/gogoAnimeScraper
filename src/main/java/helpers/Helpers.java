@@ -3,12 +3,7 @@ package helpers;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.jsoup.select.Elements;
 
-import java.util.logging.Logger;
-
 public class Helpers {
-
-    private static final Logger LOGGER = Logger.getLogger(Helpers.class.getName());
-
     /**
      * @param url The video link
      * @return boolean
@@ -19,7 +14,6 @@ public class Helpers {
         if (urlValidator.isValid(url)) {
             return true;
         }
-        //LOGGER.severe("The URL is not valid");
         return false;
     }
 

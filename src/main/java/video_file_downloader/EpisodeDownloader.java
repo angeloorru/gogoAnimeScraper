@@ -86,7 +86,7 @@ public class EpisodeDownloader {
                     LOGGER.info("Pausing for 20 seconds now...");
                     sleep(20000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    LOGGER.severe(e.getMessage());
                 }
             }
         }
@@ -230,7 +230,7 @@ public class EpisodeDownloader {
                 }
             }
         } catch (IOException e) {
-            e.getMessage();
+            LOGGER.severe(e.getMessage());
         }
 
         if (year == null || year.equals("0")) {
