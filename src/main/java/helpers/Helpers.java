@@ -29,10 +29,7 @@ public class Helpers {
      * @desc Checks that the episode actually exists. If doesn't html div content should be null.
      */
     public boolean isEpisodeAvailable(Elements elements) {
-        if (elements.size() != 0) {
-            return true;
-        }
-        return false;
+        return elements.size() != 0;
     }
 
     /**
