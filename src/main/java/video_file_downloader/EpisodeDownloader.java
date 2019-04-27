@@ -21,8 +21,11 @@ import static java.lang.Thread.sleep;
 public class EpisodeDownloader {
 
     private static final Logger LOGGER = Logger.getLogger(EpisodeDownloader.class.getName());
-    private static final String URL_HOME = "https://www2.gogoanime.io/category/detective-conan";
-    private static final int FIRST_EPISODE = 1;
+    WelcomeScreen welcomeScreen = new WelcomeScreen();
+
+    private String URL_HOME = welcomeScreen.getUrlForDownload().replace(" ", "");
+    private int FROM_EPISODE = welcomeScreen.getNumberOfEpisodeToStartDownload();
+
     private static final String DESTINATION_PATH = "Desktop";
     private static final String SEPARATOR_UNIX = "/";
     private static final String SEPARATOR_WINDOWS = "\\";
@@ -48,7 +51,7 @@ public class EpisodeDownloader {
         int totalNumberOfEpisodes = getTotalNumberOfEpisodeFromHtmlPage();
         LOGGER.info("Found " + totalNumberOfEpisodes + " episodes");
 
-        for (int i = FIRST_EPISODE; i <= totalNumberOfEpisodes; i++) {
+        for (int i = FROM_EPISODE; i <= totalNumberOfEpisodes; i++) {
             String episodesUrl = URL + i;
             url.add(episodesUrl);
         }
@@ -185,9 +188,9 @@ public class EpisodeDownloader {
     }
 
     /**
-     * @desc Scraps tags content useful for building the file name and folder's name
      * @return
      * @throws IOException
+     * @desc Scraps tags content useful for building the file name and folder's name
      */
     private String getInfoForTitleAndFolder() throws IOException {
         Document doc;

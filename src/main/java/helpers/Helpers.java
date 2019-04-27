@@ -19,7 +19,7 @@ public class Helpers {
         if (urlValidator.isValid(url)) {
             return true;
         }
-        LOGGER.severe("The URL is not valid");
+        //LOGGER.severe("The URL is not valid");
         return false;
     }
 
@@ -38,6 +38,12 @@ public class Helpers {
      * @desc Extracts the episode number from link used for resetting the counter when an episode is not found.
      */
     public int getEpisodeNumberForSettingCounter(String url) {
-        return Integer.valueOf(url.substring(url.length() - 2));
+        String[] endpoint = url.split("/");
+        int indexNumber = endpoint.length - 1;
+        String number = endpoint[indexNumber];
+
+        number = number.replaceAll("\\D+", "");
+
+        return Integer.valueOf(number);
     }
 }
