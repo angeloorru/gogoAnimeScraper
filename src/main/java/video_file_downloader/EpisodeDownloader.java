@@ -23,7 +23,7 @@ public class EpisodeDownloader {
     private static final Logger LOGGER = Logger.getLogger(EpisodeDownloader.class.getName());
     WelcomeScreen welcomeScreen = new WelcomeScreen();
 
-    private String URL_HOME = welcomeScreen.getUrlForDownload().replace(" ", "");
+    private String URL_HOME = welcomeScreen.getUrlForDownload();
     private int FROM_EPISODE = welcomeScreen.getNumberOfEpisodeToStartDownload();
 
     private static final String DESTINATION_PATH = "Desktop";
@@ -112,7 +112,7 @@ public class EpisodeDownloader {
      * @desc Build the file name
      */
     private String buildFileName(String episodeNumber, String seriesTitle, String seriesYear) {
-        return Integer.valueOf(episodeNumber) >= 1 ?
+        return totalNumberOfEpisodes > 1 ?
                 seriesTitle + "_Episode-" + episodeNumber + "_(" + seriesYear + ").mp4" :
                 seriesTitle + "_(" + seriesYear + ").mp4";
     }

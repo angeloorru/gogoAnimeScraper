@@ -16,6 +16,7 @@ public class WelcomeScreen {
             Scanner scanner = new Scanner(System.in);
 
             urlForDownload = scanner.nextLine();
+            urlForDownload = urlForDownload.replace(" ", "");
 
             if (helpers.isValidUrl(urlForDownload)) {
                 if (urlForDownload.contains("/category/")) {

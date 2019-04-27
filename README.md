@@ -2,6 +2,7 @@
 <ul>
 <li> Java Runtime: https://www.oracle.com/technetwork/java/javase/downloads/server-jre8-downloads-2133154.html
 <li> youtube-dl
+<li> PhantomJS: http://phantomjs.org/download.html
 </ul>
 
 <hr>
@@ -23,11 +24,32 @@ Windows:
 <li>Then open terminal and type: choco install -y youtube-dl ffmpeg
 </ul>
 
+<hr>
+
+<h2>To install PhantomJs:</h2>
+Linux:
+<ul>
+<li> Follow this tutorial: https://tecadmin.net/install-phantomjs-on-ubuntu/
+</ul>
+
+Mac: 
+<ul>
+<li> brew tap homebrew/cask
+<li> brew cask install phantomjs
+</ul>
+
+Windows:
+<ul>
+<li> Download PhantomJs and run the .exe file (Did not try it)
+</ul>
+
+<hr>
+
 <h2>Program Execution</h2>
 Assuming that Java is correctly installed in your computer (i.e path set up correctly), 
 open the terminal, navigate to the location of the .jar file (i.e. \Desktop) and 
-paste the following line: java -jar GoGoAnimeDownloader-1.0.jar
+paste the following line: java -jar GoGoAnimeDownloader-1.x.jar
 <br>
-Follow instruction displayed. 
+Follow the instructions displayed in the console. 
 
 
