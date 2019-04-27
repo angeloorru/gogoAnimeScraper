@@ -1,12 +1,17 @@
 Before running, install youtube-dl:
 
-Linux: 
-  sudo apt install python-pip
-  pip install youtube-dl
+Linux:
+<ul>
+<li>sudo apt install python-pip 
+<li>pip install youtube-dl
+</ul>
 Mac: 
-  Install brew package manager: https://brew.sh/
-  brew install youtube-dl
+<ul>
+<li>Install brew package manager: https://brew.sh/
+<li>brew install youtube-dl <br>
+</ul>
 Windows:
-  Install choco in Windows: https://jcutrer.com/windows/install-chocolatey-choco-windows10
-  choco install -y youtube-dl ffmpeg
-  
+<ul>
+<li>Install choco in Windows: https://jcutrer.com/windows/install-chocolatey-choco-windows10
+<li>choco install -y youtube-dl ffmpeg
+</ul>
