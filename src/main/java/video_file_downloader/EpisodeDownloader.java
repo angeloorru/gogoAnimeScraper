@@ -261,15 +261,15 @@ public class EpisodeDownloader {
     private String buildDownloadDirectory() {
         String workingDirectory = System.getProperty("user.dir");
         String absoluteFilePath = workingDirectory + File.separator;
-
-        String[] endpoint = absoluteFilePath.split("/");
+        String[] endpoint;
         String pathToSaveDownloadedFile;
 
-        //TODO: Need testing for Windows
         if (OPERATING_SYSTEM.contains("mac") || OPERATING_SYSTEM.contains("linux")) {
+            endpoint = absoluteFilePath.split("/");
             pathToSaveDownloadedFile = SEPARATOR_UNIX + endpoint[1] + SEPARATOR_UNIX +
                     endpoint[2] + SEPARATOR_UNIX + DESTINATION_PATH + SEPARATOR_UNIX;
         } else {
+            endpoint = absoluteFilePath.split("\\\\");
             pathToSaveDownloadedFile = SEPARATOR_WINDOWS + endpoint[1] + SEPARATOR_WINDOWS +
                     endpoint[2] + SEPARATOR_WINDOWS + DESTINATION_PATH + SEPARATOR_WINDOWS;
         }
