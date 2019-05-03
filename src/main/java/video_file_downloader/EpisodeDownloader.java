@@ -129,7 +129,12 @@ public class EpisodeDownloader {
 
             Elements videoBody = doc.getElementsByClass("anime_video_body");
             Element hrefContainer = videoBody.select("a").last();
-            lastEpisode = Integer.valueOf(hrefContainer.attr("ep_end"));
+
+            String lastEpisodeAsString = hrefContainer.attr("ep_end");
+
+            if (lastEpisodeAsString != null) {
+                lastEpisode = Integer.valueOf(lastEpisodeAsString.split("\\.")[0]);
+            }
 
         } catch (IOException e) {
             LOGGER.severe(e.getMessage());
