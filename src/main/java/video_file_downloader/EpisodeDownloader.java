@@ -1,9 +1,6 @@
 package video_file_downloader;
 
-import com.sapher.youtubedl.YoutubeDL;
-import com.sapher.youtubedl.YoutubeDLException;
-import com.sapher.youtubedl.YoutubeDLRequest;
-import com.sapher.youtubedl.YoutubeDLResponse;
+import com.sapher.youtubedl.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -76,7 +73,10 @@ public class EpisodeDownloader {
         LOGGER.info("For Link " + link + ": Attempting to download " +
                 fileName + " [ Episode " + episodeCounter + " of " + totalNumberOfEpisodes + " ]");
 
-        YoutubeDLResponse response = YoutubeDL.execute(request);
+        //YoutubeDLResponse response = YoutubeDL.execute(request);
+
+        YoutubeDLResponse response = YoutubeDL.execute(
+                request, (progress, etaInSeconds) -> LOGGER.info("Download Progress: " + progress + " %"));
         episodeCounter++;
 
         if (response.getExitCode() == 0) {
