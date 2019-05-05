@@ -31,7 +31,7 @@ public class Service {
     private int deadlockCounter = 0;
     private int fileMissing = 0;
 
-    /**
+    /*
      * @desc Parses the gogo anime page and extracts url video links from Open Load first link
      * for making the request with youtube-dl.
      */
@@ -73,7 +73,6 @@ public class Service {
                         downloadVideoFromWebPageOpenLoadSecond();
                     }
                 } else {
-                    //TODO:Log missing episode to a text file: errors.txt
                     //This block skips the call to downloadVideoWithYouTubeDl() hence
                     //episodeCounter in EpisodeDownloader is ++ anyway
                     System.out.println("File is missing. Need a log text file");
@@ -85,7 +84,7 @@ public class Service {
         }
     }*/
 
-    /**
+    /*
      * @desc Parses the gogo anime page and extracts url video links from Open Load first link
      * for making the request with youtube-dl.
      */
@@ -127,7 +126,6 @@ public class Service {
                         downloadVideoFromWebPageRapidVideo();
                     }
                 } else {
-                    //TODO:Log missing episode to a text file: errors.txt
                     //This block skips the call to downloadVideoWithYouTubeDl() hence
                     //episodeCounter in EpisodeDownloader is ++ anyway
                     System.out.println("File is missing. Need a log text file");
