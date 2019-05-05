@@ -73,8 +73,6 @@ public class EpisodeDownloader {
         LOGGER.info("For Link " + link + ": Attempting to download " +
                 fileName + " [ Episode " + episodeCounter + " of " + totalNumberOfEpisodes + " ]");
 
-        //YoutubeDLResponse response = YoutubeDL.execute(request);
-
         YoutubeDLResponse response = YoutubeDL.execute(
                 request, (progress, etaInSeconds) -> System.out.print("Download Progress: " + progress + " % \r"));
         episodeCounter++;
