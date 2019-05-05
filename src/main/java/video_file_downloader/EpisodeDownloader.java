@@ -76,7 +76,7 @@ public class EpisodeDownloader {
         //YoutubeDLResponse response = YoutubeDL.execute(request);
 
         YoutubeDLResponse response = YoutubeDL.execute(
-                request, (progress, etaInSeconds) -> LOGGER.info("Download Progress: " + progress + " %"));
+                request, (progress, etaInSeconds) -> System.out.print("Download Progress: " + progress + " % \r"));
         episodeCounter++;
 
         if (response.getExitCode() == 0) {
