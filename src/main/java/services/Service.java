@@ -154,7 +154,7 @@ public class Service {
             try {
                 doc = Jsoup.connect(url).get();
                 int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
-                String videoLink = null;
+                String videoLink;
 
                 Elements serviceName = doc.getElementsByClass("rapidvideo");
 
