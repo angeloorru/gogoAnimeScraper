@@ -9,9 +9,15 @@ import org.jsoup.select.Elements;
 import video_file_downloader.EpisodeDownloader;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.file.StandardOpenOption.APPEND;
+import static java.nio.file.StandardOpenOption.CREATE;
 
 
 public class Service {
@@ -134,119 +140,6 @@ public class Service {
     }*/
 
     /**
-     * @desc Parses the gogo anime page and extracts url video links from Anime
-     * for making the request with youtube-dl.
-     */
-    private void downloadVideoFromWebPageAnime() {
-        Iterator<String> iterator = urlList.iterator();
-
-        while (iterator.hasNext()) {
-            String url = iterator.next();
-
-            Document doc;
-
-            try {
-                doc = Jsoup.connect(url).get();
-                int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
-
-                Elements serviceName = doc.getElementsByClass("anime");
-
-                if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
-                    Element link = serviceName.select("a").first();
-                    String videoLink = link.attr("data-video");
-
-                    LOGGER.info("[Anime]: Sending link " + videoLink + " to youtube-dl");
-                    try {
-                        episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
-                        //Shared list must be kept up to date. If done with the url, remove it.
-                        if (urlList.size() > 1) {
-                            iterator.remove();
-                            //reset counter
-                            fileMissing = 0;
-                        }
-                    } catch (YoutubeDLException e) {
-                        LOGGER.severe(e.getMessage());
-
-                        if (deadlockCounter == NUMBER_OF_SERVICES) {
-                            LOGGER.severe("[Anime]: Deadlock occurred");
-                            System.exit(0);
-                        }
-
-                        LOGGER.info("[Anime Error]: Sending job to VidCdn service");
-                        downloadVideoFromWebPageVidCdn();
-                    }
-                } else {
-                    //TODO:Log missing episode to a text file: errors.txt
-                    if (fileMissing == NUMBER_OF_SERVICES) {
-                        System.out.println("File is missing. Need a log text file");
-                    }
-                    LOGGER.info("[Anime Error]: Looking for missing file into VidCdn service");
-                    downloadVideoFromWebPageVidCdn();
-                    fileMissing++;
-                }
-            } catch (IOException e) {
-                LOGGER.severe("[Message]: " + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * @desc Parses the gogo anime page and extracts url video links from VidCdn
-     * for making the request with youtube-dl.
-     */
-    private void downloadVideoFromWebPageVidCdn() {
-        Iterator<String> iterator = urlList.iterator();
-
-        while (iterator.hasNext()) {
-            String url = iterator.next();
-
-            Document doc;
-
-            try {
-                doc = Jsoup.connect(url).get();
-                int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
-
-                Elements serviceName = doc.getElementsByClass("vidcdn");
-
-                if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
-                    Element link = serviceName.select("a").first();
-                    String videoLink = link.attr("data-video");
-
-                    LOGGER.info("[VidCdn]: Sending link " + videoLink + " to youtube-dl");
-                    try {
-                        episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
-                        //Shared list must be kept up to date. If done with the url, remove it.
-                        if (urlList.size() > 1) {
-                            iterator.remove();
-                            fileMissing = 0;
-                        }
-                    } catch (YoutubeDLException e) {
-                        LOGGER.severe(e.getMessage());
-
-                        if (deadlockCounter == NUMBER_OF_SERVICES) {
-                            LOGGER.severe("[VidCdn]: Deadlock occurred");
-                            System.exit(0);
-                        }
-
-                        LOGGER.info("[VidCdn Error]: Sending job to Rapid Video service");
-                        downloadVideoFromWebPageRapidVideo();
-                    }
-                } else {
-                    //TODO:Log missing episode to a text file: errors.txt
-                    if (fileMissing == NUMBER_OF_SERVICES) {
-                        System.out.println("File is missing. Need a log text file");
-                    }
-                    LOGGER.info("[Anime Error]: Looking for missing file into Rapid Video service");
-                    downloadVideoFromWebPageRapidVideo();
-                    fileMissing++;
-                }
-            } catch (IOException e) {
-                LOGGER.severe("[Message]: " + e.getMessage());
-            }
-        }
-    }
-
-    /**
      * @desc Parses the gogo anime page and extracts url video links from Rapid Video
      * for making the request with youtube-dl.
      */
@@ -261,43 +154,46 @@ public class Service {
             try {
                 doc = Jsoup.connect(url).get();
                 int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
+                String videoLink = null;
 
                 Elements serviceName = doc.getElementsByClass("rapidvideo");
 
                 if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
                     Element link = serviceName.select("a").first();
-                    String videoLink = link.attr("data-video");
+                    videoLink = link.attr("data-video");
 
                     LOGGER.info("[Rapid Video]: Sending link " + videoLink + " to youtube-dl");
                     try {
                         episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
                         //Shared list must be kept up to date. If done with the url, remove it.
-                        if (urlList.size() > 1) {
+                        if (urlList.size() >= 1) {
                             iterator.remove();
+                            //reset counter
                             fileMissing = 0;
                         }
                     } catch (YoutubeDLException e) {
                         LOGGER.severe(e.getMessage());
 
-                        if (deadlockCounter == NUMBER_OF_SERVICES) {
+                        if (deadlockCounter == (NUMBER_OF_SERVICES * 2)) {
                             LOGGER.severe("[Rapid Video]: Deadlock occurred");
                             System.exit(0);
                         }
 
                         LOGGER.info("[Rapid Video Error]: Sending job to Stream Mango service");
+                        deadlockCounter++;
                         downloadVideoFromWebPageStreamMango();
                     }
                 } else {
-                    //TODO:Log missing episode to a text file: errors.txt
                     if (fileMissing == NUMBER_OF_SERVICES) {
-                        System.out.println("File is missing. Need a log text file");
+                        writeDataToLogFile(episodeNumber);
+                        iterator.remove();
                     }
-                    LOGGER.info("[Anime Error]: Looking for missing file into Stream Mango service");
-                    downloadVideoFromWebPageStreamMango();
+                    LOGGER.info("[Rapid Video]: Looking for missing file into Stream Mango service");
                     fileMissing++;
+                    downloadVideoFromWebPageStreamMango();
                 }
             } catch (IOException e) {
-                LOGGER.severe("[Message]: " + e.getMessage());
+                LOGGER.severe("[Rapid Video Message]: " + e.getMessage());
             }
         }
     }
@@ -317,44 +213,180 @@ public class Service {
             try {
                 doc = Jsoup.connect(url).get();
                 int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
+                String videoLink;
 
                 Elements serviceName = doc.getElementsByClass("streamango");
 
                 if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
                     Element link = serviceName.select("a").first();
-                    String videoLink = link.attr("data-video");
+                    videoLink = link.attr("data-video");
 
-                    LOGGER.info("[Stream Mango]: Sending link " + videoLink + " to youtube-dl");
+                    LOGGER.info("[Stream Mang]: Sending link " + videoLink + " to youtube-dl");
                     try {
                         episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
                         //Shared list must be kept up to date. If done with the url, remove it.
-                        if (urlList.size() > 1) {
+                        if (urlList.size() >= 1) {
                             iterator.remove();
+                            //reset counter
                             fileMissing = 0;
                         }
                     } catch (YoutubeDLException e) {
                         LOGGER.severe(e.getMessage());
 
-                        if (deadlockCounter == NUMBER_OF_SERVICES) {
-                            LOGGER.severe("[Stream Mango]: Deadlock occurred");
+                        if (deadlockCounter == (NUMBER_OF_SERVICES * 2)) {
+                            LOGGER.severe("[Stream Mang]: Deadlock occurred");
                             System.exit(0);
                         }
 
-                        LOGGER.info("[Stream Mango]: Sending job to Anime service");
+                        LOGGER.info("[Stream Mang Error]: Sending job to Anime service");
+                        deadlockCounter++;
                         downloadVideoFromWebPageAnime();
                     }
                 } else {
-                    //TODO:Log missing episode to a text file: errors.txt
                     if (fileMissing == NUMBER_OF_SERVICES) {
-                        System.out.println("File is missing. Need a log text file");
+                        writeDataToLogFile(episodeNumber);
+                        iterator.remove();
                     }
                     LOGGER.info("[Stream Mango Error]: Looking for missing file into Anime service");
-                    downloadVideoFromWebPageAnime();
                     fileMissing++;
+                    downloadVideoFromWebPageAnime();
                 }
             } catch (IOException e) {
-                LOGGER.severe("[Message]: " + e.getMessage());
+                LOGGER.severe("[Stream Mango Message]: " + e.getMessage());
             }
+        }
+    }
+
+
+    /**
+     * @desc Parses the gogo anime page and extracts url video links from Anime
+     * for making the request with youtube-dl.
+     */
+    private void downloadVideoFromWebPageAnime() {
+        Iterator<String> iterator = urlList.iterator();
+
+        while (iterator.hasNext()) {
+            String url = iterator.next();
+
+            Document doc;
+
+            try {
+                doc = Jsoup.connect(url).get();
+                int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
+                String videoLink;
+
+                Elements serviceName = doc.getElementsByClass("anime");
+
+                if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
+                    Element link = serviceName.select("a").first();
+                    videoLink = link.attr("data-video");
+
+                    LOGGER.info("[Anime]: Sending link " + videoLink + " to youtube-dl");
+                    try {
+                        episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
+                        //Shared list must be kept up to date. If done with the url, remove it.
+                        if (urlList.size() >= 1) {
+                            iterator.remove();
+                            //reset counter
+                            fileMissing = 0;
+                        }
+                    } catch (YoutubeDLException e) {
+                        LOGGER.severe(e.getMessage());
+
+                        if (deadlockCounter == (NUMBER_OF_SERVICES * 2)) {
+                            LOGGER.severe("[Anime]: Deadlock occurred");
+                            System.exit(0);
+                        }
+
+                        LOGGER.info("[Anime Error]: Sending job to VidCdn service");
+                        deadlockCounter++;
+                        downloadVideoFromWebPageVidCdn();
+                    }
+                } else {
+                    if (fileMissing == NUMBER_OF_SERVICES) {
+                        writeDataToLogFile(episodeNumber);
+                        iterator.remove();
+                    }
+                    LOGGER.info("[Anime Error]: Looking for missing file into VidCdn service");
+                    fileMissing++;
+                    downloadVideoFromWebPageVidCdn();
+                }
+            } catch (IOException e) {
+                LOGGER.severe("[Anime Message]: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * @desc Parses the gogo anime page and extracts url video links from VidCdn
+     * for making the request with youtube-dl.
+     */
+    private void downloadVideoFromWebPageVidCdn() {
+        Iterator<String> iterator = urlList.iterator();
+
+        while (iterator.hasNext()) {
+            String url = iterator.next();
+
+            Document doc;
+
+            try {
+                doc = Jsoup.connect(url).get();
+                int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
+                String videoLink;
+
+                Elements serviceName = doc.getElementsByClass("vidcdn");
+
+                if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
+                    Element link = serviceName.select("a").first();
+                    videoLink = link.attr("data-video");
+
+                    LOGGER.info("[VidCdn]: Sending link " + videoLink + " to youtube-dl");
+                    try {
+                        episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
+                        //Shared list must be kept up to date. If done with the url, remove it.
+                        if (urlList.size() >= 1) {
+                            iterator.remove();
+                            //reset counter
+                            fileMissing = 0;
+                        }
+                    } catch (YoutubeDLException e) {
+                        LOGGER.severe(e.getMessage());
+
+                        if (deadlockCounter == (NUMBER_OF_SERVICES * 2)) {
+                            LOGGER.severe("[VidCdn]: Deadlock occurred");
+                            System.exit(0);
+                        }
+
+                        LOGGER.info("[VidCdn Error]: Sending job to Rapid Video service");
+                        deadlockCounter++;
+                        downloadVideoFromWebPageRapidVideo();
+                    }
+                } else {
+                    if (fileMissing == NUMBER_OF_SERVICES) {
+                        writeDataToLogFile(episodeNumber);
+                        iterator.remove();
+                    }
+                    LOGGER.info("[VidCdn Error]: Looking for missing file into Rapid Video service");
+                    fileMissing++;
+                    downloadVideoFromWebPageRapidVideo();
+                }
+            } catch (IOException e) {
+                LOGGER.severe("[VidCdn Message]: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * @param episodeNumber
+     * @desc Log file
+     */
+    private void writeDataToLogFile(int episodeNumber) {
+        String filePath = episodeProcessor.buildDownloadDirectory();
+        String text = "Episode " + episodeNumber + " was not found.\n";
+        try {
+            Files.write(Paths.get(filePath + "/logFile.log"), text.getBytes(UTF_8), CREATE, APPEND);
+        } catch (IOException e) {
+            LOGGER.severe(e.getMessage());
         }
     }
 }

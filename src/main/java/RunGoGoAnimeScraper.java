@@ -12,7 +12,7 @@ public class RunGoGoAnimeScraper {
         service.downloadVideoFromWebPageRapidVideo();
 
         System.out.println("*******************************************");
-        System.out.println("\n\n All files saved in the Desktop folder.");
+        System.out.println("\n\n All files have been saved in the Desktop folder.");
         System.out.println("*******************************************");
     }
 }

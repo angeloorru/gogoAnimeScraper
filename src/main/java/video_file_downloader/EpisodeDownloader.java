@@ -1,6 +1,9 @@
 package video_file_downloader;
 
-import com.sapher.youtubedl.*;
+import com.sapher.youtubedl.YoutubeDL;
+import com.sapher.youtubedl.YoutubeDLException;
+import com.sapher.youtubedl.YoutubeDLRequest;
+import com.sapher.youtubedl.YoutubeDLResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -265,7 +268,7 @@ public class EpisodeDownloader {
      * @return
      * @desc Build the file path and folder name.
      */
-    private String buildDownloadDirectory() {
+    public String buildDownloadDirectory() {
         String workingDirectory = System.getProperty("user.dir");
         String absoluteFilePath = workingDirectory + File.separator;
         String[] endpoint;
