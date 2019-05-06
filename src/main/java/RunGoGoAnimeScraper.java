@@ -1,5 +1,4 @@
 import services.Service;
-import video_file_downloader.WelcomeScreen;
 
 public class RunGoGoAnimeScraper {
     public static void main(String[] args) {
@@ -9,7 +8,7 @@ public class RunGoGoAnimeScraper {
         System.out.println("*****************************************************\n");
 
         Service service = new Service();
-        service.downloadVideoFromWebPageRapidVideo();
+        service.extractVideoLinksFromWebPage();
 
         System.out.println("*******************************************");
         System.out.println("\n\n All files have been saved in the Desktop folder.");

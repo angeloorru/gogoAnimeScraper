@@ -21,7 +21,7 @@ import static java.lang.Thread.sleep;
 public class EpisodeDownloader {
 
     private static final Logger LOGGER = Logger.getLogger(EpisodeDownloader.class.getName());
-    WelcomeScreen welcomeScreen = new WelcomeScreen();
+    private WelcomeScreen welcomeScreen = new WelcomeScreen();
 
     private String URL_HOME = welcomeScreen.getUrlForDownload();
     private int FROM_EPISODE = welcomeScreen.getNumberOfEpisodeToStartDownload();
@@ -188,8 +188,10 @@ public class EpisodeDownloader {
             LOGGER.severe(e.getMessage());
         }
         LOGGER.info("Attempting to build the file title");
-        title = title.replace(" ", "_");
-        LOGGER.info("File tile [" + title + "] built");
+        if (title != null) {
+            title = title.replace(" ", "_");
+            LOGGER.info("File tile [" + title + "] built");
+        }
         return title;
     }
 
@@ -284,11 +286,16 @@ public class EpisodeDownloader {
                     endpoint[2] + SEPARATOR_WINDOWS + DESTINATION_PATH + SEPARATOR_WINDOWS;
         }
 
-        File destinationFolder = new File(pathToSaveDownloadedFile + folderName);
+        File pathToDestinationFolder = new File(pathToSaveDownloadedFile + folderName);
 
-        if (!destinationFolder.exists()) {
-            destinationFolder.mkdir();
+        boolean isDirectoryCreated = pathToDestinationFolder.exists();
+
+        if (!isDirectoryCreated) {
+            isDirectoryCreated = pathToDestinationFolder.mkdir();
         }
-        return destinationFolder.toString();
+        if (isDirectoryCreated) {
+            return pathToDestinationFolder.toString();
+        }
+        return pathToDestinationFolder.toString();
     }
 }
