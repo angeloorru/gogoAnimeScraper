@@ -47,7 +47,9 @@ public class Service {
                 int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
                 List<String> urlLinks = getDivElementsFromService();
 
-                sendUrlVideoDataToYouTubeDl(iterator, doc, episodeNumber, urlLinks);
+                if (sendUrlVideoDataToYouTubeDl(iterator, doc, episodeNumber, urlLinks)) {
+                    iterator.remove();
+                }
 
             } catch (IOException e) {
                 LOGGER.severe("[Service Message]: " + e.getMessage());
@@ -62,8 +64,8 @@ public class Service {
      * @param urlLinks
      * @desc Accepts a video url to make the request to yoytube-dl.
      */
-    private void sendUrlVideoDataToYouTubeDl(Iterator<String> iterator, Document doc,
-                                             int episodeNumber, List<String> urlLinks) {
+    private boolean sendUrlVideoDataToYouTubeDl(Iterator<String> iterator, Document doc,
+                                                int episodeNumber, List<String> urlLinks) {
 
         for (String service : urlLinks) {
             Elements serviceName = doc.getElementsByClass("rapidvideo");
@@ -73,7 +75,8 @@ public class Service {
                 LOGGER.info("[" + service + "]: Sending link " + videoLink + " to youtube-dl");
                 try {
                     episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
-                    removeUrlAndResetFileCounter(iterator);
+                    resetFileCounter();
+                    return true;
                 } catch (YoutubeDLException e) {
                     LOGGER.severe(e.getMessage());
                     deadlockCounter++;
@@ -86,6 +89,7 @@ public class Service {
                 LOGGER.info("[" + service + "]: Looking for missing file in the next available service");
             }
         }
+        return false;
     }
 
     /**
@@ -101,16 +105,14 @@ public class Service {
     }
 
     /**
-     * @param iterator
      * @desc Once the file is downloaded the url link is removed from the list.
      * The list is removed so that we can keep track of the missing files and
      * carry on downloading the other available files.
      * The file missing counter is set back to 0.
      */
-    private void removeUrlAndResetFileCounter(Iterator<String> iterator) {
+    private void resetFileCounter() {
         //Shared list must be kept up to date. If done with the url, remove it.
         if (urlList.size() >= 1) {
-            iterator.remove();
             //reset counter
             fileMissing = 0;
         }
