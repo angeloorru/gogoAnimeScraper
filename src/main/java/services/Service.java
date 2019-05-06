@@ -72,7 +72,7 @@ public class Service {
 
             if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
                 String videoLink = getVideoLinkUrl(serviceName);
-                LOGGER.info("[" + service + "]: Sending link " + videoLink + " to youtube-dl");
+                LOGGER.info("[Service " + service + "]: Sending link " + videoLink + " to youtube-dl");
                 try {
                     episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
                     resetFileCounter();
@@ -81,12 +81,12 @@ public class Service {
                     LOGGER.severe(e.getMessage());
                     deadlockCounter++;
                     exitSystemWhenInDeadlock(service);
-                    LOGGER.info("[" + service + " Error]: Sending job to next available service");
+                    LOGGER.info("[Service " + service + " Error]: Sending job to next available service");
                 }
             } else {
                 fileMissing++;
                 writeDataToLogFile(episodeNumber, iterator);
-                LOGGER.info("[" + service + "]: Looking for missing file in the next available service");
+                LOGGER.info("[Service " + service + "]: Looking for missing file in the next available service");
             }
         }
         return false;
