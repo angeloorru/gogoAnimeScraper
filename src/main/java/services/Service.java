@@ -157,6 +157,7 @@ public class Service {
             try {
                 Files.write(Paths.get(filePath + "/logFile.log"), text.getBytes(UTF_8), CREATE, APPEND);
                 iterator.remove();
+                fileMissing = 0;
             } catch (IOException e) {
                 LOGGER.severe(e.getMessage());
             }
