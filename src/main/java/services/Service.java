@@ -77,7 +77,6 @@ public class Service {
                 } catch (YoutubeDLException e) {
                     LOGGER.severe(e.getMessage());
                     deadlockCounter++;
-
                     exitSystemWhenInDeadlock(service);
                     LOGGER.info("[" + service + " Error]: Sending job to next available service");
                 }
