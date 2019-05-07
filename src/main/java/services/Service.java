@@ -68,7 +68,7 @@ public class Service {
                                                 int episodeNumber, List<String> urlLinks) {
 
         for (String service : urlLinks) {
-            Elements serviceName = doc.getElementsByClass("rapidvideo");
+            Elements serviceName = doc.getElementsByClass(service);
 
             if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
                 String videoLink = getVideoLinkUrl(serviceName);
