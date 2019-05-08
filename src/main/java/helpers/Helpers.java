@@ -11,10 +11,7 @@ public class Helpers {
      */
     public boolean isValidUrl(String url) {
         UrlValidator urlValidator = new UrlValidator();
-        if (urlValidator.isValid(url)) {
-            return true;
-        }
-        return false;
+        return urlValidator.isValid(url);
     }
 
     /**
@@ -23,7 +20,7 @@ public class Helpers {
      * @desc Checks that the episode actually exists. If doesn't html div content should be null.
      */
     public boolean isEpisodeAvailable(Elements elements) {
-        return elements.size() != 0;
+        return elements.size() > 0;
     }
 
     /**
@@ -38,6 +35,10 @@ public class Helpers {
 
         number = number.replaceAll("\\D+", "");
 
-        return Integer.valueOf(number);
+        try {
+            return Integer.valueOf(number);
+        } catch (NumberFormatException e) {
+            return -1;
+        }
     }
 }

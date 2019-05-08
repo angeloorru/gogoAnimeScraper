@@ -291,7 +291,11 @@ public class EpisodeDownloader {
         boolean isDirectoryCreated = pathToDestinationFolder.exists();
 
         if (!isDirectoryCreated) {
-            pathToDestinationFolder.mkdir();
+            boolean mkdir = pathToDestinationFolder.mkdir();
+
+            if (mkdir) {
+                return pathToDestinationFolder.toString();
+            }
         }
         return pathToDestinationFolder.toString();
     }
