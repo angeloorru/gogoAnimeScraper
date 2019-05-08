@@ -3,8 +3,6 @@ package helpers;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -16,16 +14,6 @@ import static org.junit.Assert.assertTrue;
 public class HelpersTest {
 
     private Helpers helpers = new Helpers();
-
-    @Before
-    public void setUp() {
-    }
-
-
-    @After
-    public void tearDown() {
-
-    }
 
     @Test
     public void testThatTheUrlIsValid() {
