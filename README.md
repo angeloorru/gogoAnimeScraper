@@ -56,5 +56,7 @@ open the terminal, navigate to the location of the .jar file (i.e. \Desktop) and
 paste the following line: java -jar GoGoAnimeDownloader-1.x.jar
 <br>
 Follow the instructions displayed in the console. 
+<br>
+*Note: If the services are not available, a log file is generated with the missing episodes.
 
 
