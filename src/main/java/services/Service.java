@@ -154,7 +154,7 @@ public class Service {
      * @desc Log file
      */
     private void writeDataToLogFile(int episodeNumber, Iterator<String> iterator) {
-        if (fileMissing == NUMBER_OF_SERVICES) {
+        if (fileMissing >= NUMBER_OF_SERVICES) {
             String filePath = episodeProcessor.buildDownloadDirectory();
             String text = "Episode " + episodeNumber + " was not found.\n";
             try {
