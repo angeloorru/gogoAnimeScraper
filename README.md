@@ -29,7 +29,8 @@ Windows:
 <h2>To install PhantomJs:</h2>
 Linux:
 <ul>
-<li> Follow this tutorial: https://tecadmin.net/install-phantomjs-on-ubuntu/
+<li> The distro should come PhantomJs ready. If not: 
+follow this tutorial: https://tecadmin.net/install-phantomjs-on-ubuntu/
 </ul>
 
 Mac: 
@@ -46,6 +47,10 @@ Windows:
 <hr>
 
 <h2>Program Execution</h2>
+<h3> The app is ready for build with all it's dependencies. To do so run: mvn package.<br>
+Alternatively you can download the jar file above.
+
+</h3>
 Assuming that Java is correctly installed in your computer (i.e path set up correctly), 
 open the terminal, navigate to the location of the .jar file (i.e. \Desktop) and 
 paste the following line: java -jar GoGoAnimeDownloader-1.x.jar
