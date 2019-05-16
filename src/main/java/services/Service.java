@@ -82,6 +82,7 @@ public class Service {
                     deadlockCounter++;
                     fileMissing++;
                     exitSystemWhenInDeadlock(service);
+                    writeDataToLogFile(episodeNumber, iterator);
                     LOGGER.info("[Service " + service + " Error]: Sending job to next available service");
                 }
             } else {
