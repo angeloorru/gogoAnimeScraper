@@ -33,7 +33,7 @@ public class Helpers {
         int indexNumber = endpoint.length - 1;
         String number = endpoint[indexNumber];
 
-        number = number.replaceAll("\\D+", "");
+        number = number.substring(number.length()-2).replaceAll("\\D+","");
 
         try {
             return Integer.valueOf(number);

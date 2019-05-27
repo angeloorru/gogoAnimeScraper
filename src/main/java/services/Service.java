@@ -140,7 +140,7 @@ public class Service {
         List<String> services = new ArrayList<>();
         /*
          ** Ideally list should be populated by parsing html tags,
-         ** but not all of them are currently supported by youtube-dl
+         ** but not all of them are currently supported by youtube-dl...so...
          */
         services.add("rapidvideo");
         services.add("streamango");
