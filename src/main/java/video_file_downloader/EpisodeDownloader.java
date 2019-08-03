@@ -81,7 +81,6 @@ public class EpisodeDownloader {
     }
 
     /**
-     *
      * @param request
      * @return
      * @throws YoutubeDLException
@@ -94,7 +93,6 @@ public class EpisodeDownloader {
     }
 
     /**
-     *
      * @param episodeNumber
      * @param fileName
      * @param response
@@ -107,7 +105,6 @@ public class EpisodeDownloader {
     }
 
     /**
-     *
      * @param episodeNumberFromService
      */
     private void setEpisodeCounter(int episodeNumberFromService) {
@@ -267,21 +264,26 @@ public class EpisodeDownloader {
             doc = Jsoup.connect(URL_HOME).get();
 
             Elements releasedYear = doc.getElementsByClass(HtmlTagEnum.RELEASE_YEAR_TAG.getValue());
-
             year = searchForYearString(releasedYear);
         } catch (IOException e) {
             LOGGER.severe(e.getMessage());
         }
-
-        if (year == null || year.equals("0")) {
-            return EpisodeDownloaderEnum.YEAR_NOT_AVAILABLE.getValue();
+        if (isReleasedYearAvailable(year)) {
+            year = EpisodeDownloaderEnum.YEAR_NOT_AVAILABLE.getValue();
         }
         LOGGER.info("File year [" + year + "] built");
         return year;
     }
 
     /**
-     *
+     * @param year
+     * @return
+     */
+    private boolean isReleasedYearAvailable(String year) {
+        return year == null || year.equals("0");
+    }
+
+    /**
      * @param releasedYear
      * @return
      */
@@ -338,7 +340,6 @@ public class EpisodeDownloader {
     }
 
     /**
-     *
      * @param absoluteFilePath
      * @return
      */
@@ -357,7 +358,6 @@ public class EpisodeDownloader {
     }
 
     /**
-     *
      * @param pathToDestinationFolder
      * @return
      */
