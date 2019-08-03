@@ -1,4 +1,4 @@
-package video_file_downloader;
+package video_file_downloader.enums;
 
 public enum HtmlTagEnum {
 
@@ -7,8 +7,7 @@ public enum HtmlTagEnum {
     LAST_EPISODE_TAG("ep_end"),
     PRODUCT_NAME_TAG("anime_info_body_bg"),
     TITLE_TAG("h1"),
-    RELEASE_YEAR_TAG("type"),
-    ;
+    RELEASE_YEAR_TAG("type");
 
 
     private String value;

@@ -1,4 +1,4 @@
-package video_file_downloader;
+package video_file_downloader.enums;
 
 public enum EpisodeDownloaderEnum {
     DESTINATION_PATH("Desktop"),

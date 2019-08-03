@@ -8,6 +8,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import video_file_downloader.enums.EpisodeDownloaderEnum;
+import video_file_downloader.enums.HtmlTagEnum;
+import video_file_downloader.enums.YouTubeDlRequestOptionEnum;
 
 import java.io.File;
 import java.io.IOException;
