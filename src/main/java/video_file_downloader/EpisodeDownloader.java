@@ -62,9 +62,7 @@ public class EpisodeDownloader {
      */
     public void downloadVideoWithYouTubeDl(String link, int episodeNumberFromService) throws YoutubeDLException {
 
-        if (episodeCounter < episodeNumberFromService) {
-            episodeCounter = episodeNumberFromService;
-        }
+        setEpisodeCounter(episodeNumberFromService);
 
         String episodeNumber = buildFileNameIfLessThanTenEpisodes();
         String fileName = buildFileName(String.valueOf(episodeCounter), seriesTitle, seriesYear);
@@ -74,13 +72,44 @@ public class EpisodeDownloader {
         LOGGER.info("For Link " + link + ": Attempting to download " +
                 fileName + " [ Episode " + episodeCounter + " of " + totalNumberOfEpisodes + " ]");
 
+        YoutubeDLResponse response = executeYouTubeDLRequest(request);
+
+        pauseDownloadWhenFinishedSuccessfully(episodeNumber, fileName, response);
+    }
+
+    /**
+     *
+     * @param request
+     * @return
+     * @throws YoutubeDLException
+     */
+    private YoutubeDLResponse executeYouTubeDLRequest(YoutubeDLRequest request) throws YoutubeDLException {
         YoutubeDLResponse response = YoutubeDL.execute(
                 request, (progress, etaInSeconds) -> System.out.print("Download progress at: " + progress + " % \r"));
         episodeCounter++;
+        return response;
+    }
 
+    /**
+     *
+     * @param episodeNumber
+     * @param fileName
+     * @param response
+     */
+    private void pauseDownloadWhenFinishedSuccessfully(String episodeNumber, String fileName, YoutubeDLResponse response) {
         if (response.getExitCode() == 0) {
             LOGGER.info("File " + fileName + " downloaded successfully");
             pauseTheDownload(episodeNumber);
+        }
+    }
+
+    /**
+     *
+     * @param episodeNumberFromService
+     */
+    private void setEpisodeCounter(int episodeNumberFromService) {
+        if (episodeCounter < episodeNumberFromService) {
+            episodeCounter = episodeNumberFromService;
         }
     }
 
@@ -236,12 +265,7 @@ public class EpisodeDownloader {
 
             Elements releasedYear = doc.getElementsByClass(HtmlTagEnum.RELEASE_YEAR_TAG.getValue());
 
-            for (Element span : releasedYear) {
-                if (span.text().contains(EpisodeDownloaderEnum.RELEASED.getValue())) {
-                    year = span.text().replace(" ", "")
-                            .replace(EpisodeDownloaderEnum.RELEASED.getValue(), "");
-                }
-            }
+            year = searchForYearString(releasedYear);
         } catch (IOException e) {
             LOGGER.severe(e.getMessage());
         }
@@ -250,6 +274,23 @@ public class EpisodeDownloader {
             return EpisodeDownloaderEnum.YEAR_NOT_AVAILABLE.getValue();
         }
         LOGGER.info("File year [" + year + "] built");
+        return year;
+    }
+
+    /**
+     *
+     * @param releasedYear
+     * @return
+     */
+    private String searchForYearString(Elements releasedYear) {
+        String year = null;
+
+        for (Element span : releasedYear) {
+            if (span.text().contains(EpisodeDownloaderEnum.RELEASED.getValue())) {
+                year = span.text().replace(" ", "")
+                        .replace(EpisodeDownloaderEnum.RELEASED.getValue(), "");
+            }
+        }
         return year;
     }
 
@@ -277,16 +318,7 @@ public class EpisodeDownloader {
     public String buildDownloadDirectory() {
         String workingDirectory = System.getProperty(EpisodeDownloaderEnum.USER_DIR.getValue());
         String absoluteFilePath = workingDirectory + File.separator;
-        String pathToSaveDownloadedFile = null;
-
-        if (EpisodeDownloaderEnum.OPERATING_SYSTEM.getValue().contains(EpisodeDownloaderEnum.MAC.getValue()) ||
-                EpisodeDownloaderEnum.OPERATING_SYSTEM.getValue().contains(EpisodeDownloaderEnum.LINUX.getValue())) {
-
-            pathToSaveDownloadedFile = buildPathToSaveFileInUnix(absoluteFilePath);
-
-        } else if (EpisodeDownloaderEnum.OPERATING_SYSTEM.getValue().contains(EpisodeDownloaderEnum.WINDOWS.getValue())) {
-            pathToSaveDownloadedFile = buildPathToSaveFileInWindows(absoluteFilePath);
-        }
+        String pathToSaveDownloadedFile = getPathToSaveFile(absoluteFilePath);
 
         if (pathToSaveDownloadedFile != null) {
             File pathToDestinationFolder = new File(pathToSaveDownloadedFile + folderName);
@@ -300,6 +332,25 @@ public class EpisodeDownloader {
         }
 
         return pathToSaveDownloadedFile + folderName;
+    }
+
+    /**
+     *
+     * @param absoluteFilePath
+     * @return
+     */
+    private String getPathToSaveFile(String absoluteFilePath) {
+        String pathToSaveDownloadedFile = null;
+
+        if (EpisodeDownloaderEnum.OPERATING_SYSTEM.getValue().contains(EpisodeDownloaderEnum.MAC.getValue()) ||
+                EpisodeDownloaderEnum.OPERATING_SYSTEM.getValue().contains(EpisodeDownloaderEnum.LINUX.getValue())) {
+
+            pathToSaveDownloadedFile = buildPathToSaveFileInUnix(absoluteFilePath);
+
+        } else if (EpisodeDownloaderEnum.OPERATING_SYSTEM.getValue().contains(EpisodeDownloaderEnum.WINDOWS.getValue())) {
+            pathToSaveDownloadedFile = buildPathToSaveFileInWindows(absoluteFilePath);
+        }
+        return pathToSaveDownloadedFile;
     }
 
     /**

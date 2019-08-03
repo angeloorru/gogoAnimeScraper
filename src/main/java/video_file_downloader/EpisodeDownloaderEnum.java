@@ -10,7 +10,7 @@ public enum EpisodeDownloaderEnum {
     WINDOWS("windows"),
     USER_DIR("user.dir"),
     YEAR_NOT_AVAILABLE("0000"),
-    RELEASED("Released");
+    RELEASED("Released:");
 
     private String value;
 
