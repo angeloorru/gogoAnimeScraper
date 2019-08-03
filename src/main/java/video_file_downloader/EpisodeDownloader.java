@@ -229,7 +229,6 @@ public class EpisodeDownloader {
     private String extractYear() {
         String year = null;
         Document doc;
-        final String RELEASED = "Released:";
 
         try {
             LOGGER.info("Attempting to build the file year");
@@ -238,8 +237,9 @@ public class EpisodeDownloader {
             Elements releasedYear = doc.getElementsByClass(HtmlTagEnum.RELEASE_YEAR_TAG.getValue());
 
             for (Element span : releasedYear) {
-                if (span.text().contains(RELEASED)) {
-                    year = span.text().replace(" ", "").replace(RELEASED, "");
+                if (span.text().contains(EpisodeDownloaderEnum.RELEASED.getValue())) {
+                    year = span.text().replace(" ", "")
+                            .replace(EpisodeDownloaderEnum.RELEASED.getValue(), "");
                 }
             }
         } catch (IOException e) {
