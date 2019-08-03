@@ -4,7 +4,7 @@ import helpers.Helpers;
 
 import java.util.Scanner;
 
-public class WelcomeScreen {
+class WelcomeScreen {
 
     private Helpers helpers = new Helpers();
 

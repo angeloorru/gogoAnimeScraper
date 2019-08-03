@@ -7,6 +7,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import video_file_downloader.EpisodeDownloader;
+import video_file_downloader.builders.SaveDirectoryBuilder;
+import video_file_downloader.enums.AvailableServicesEnum;
+import video_file_downloader.enums.HtmlTagEnum;
+import video_file_downloader.enums.ServiceEnum;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,6 +30,7 @@ public class Service {
     private static final Logger LOGGER = Logger.getLogger(Service.class.getName());
 
     private EpisodeDownloader episodeProcessor = new EpisodeDownloader();
+    private SaveDirectoryBuilder saveDirectoryBuilder = new SaveDirectoryBuilder(episodeProcessor);
     private Helpers helpers = new Helpers();
 
     private List<String> urlList = episodeProcessor.constructUrlForRequest();
@@ -65,8 +70,8 @@ public class Service {
      * @param urlLinks
      * @desc Accepts a video url to make the request to yoytube-dl.
      */
-    private boolean sendUrlVideoDataToYouTubeDl(Iterator<String> iterator, Document doc,
-                                                int episodeNumber, List<String> urlLinks) {
+    private boolean sendUrlVideoDataToYouTubeDl(
+            Iterator<String> iterator, Document doc, int episodeNumber, List<String> urlLinks) {
 
         for (String service : urlLinks) {
             Elements serviceName = doc.getElementsByClass(service);
@@ -74,23 +79,39 @@ public class Service {
             if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
                 String videoLink = getVideoLinkUrl(serviceName);
                 LOGGER.info("[Service " + service + "]: Sending link " + videoLink + " to youtube-dl");
-                try {
-                    episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
-                    resetFileCounter();
+                if (delegateAvailableServiceToDownloadVideo(iterator, episodeNumber, service, videoLink)) {
                     return true;
-                } catch (YoutubeDLException e) {
-                    LOGGER.severe(e.getMessage());
-                    deadlockCounter++;
-                    fileMissing++;
-                    exitSystemWhenInDeadlock(service);
-                    writeDataToLogFile(episodeNumber, iterator);
-                    LOGGER.info("[Service " + service + " Error]: Sending job to next available service");
                 }
             } else {
                 fileMissing++;
                 writeDataToLogFile(episodeNumber, iterator);
                 LOGGER.info("[Service " + service + "]: Looking for missing file in the next available service");
             }
+        }
+        return false;
+    }
+
+    /**
+     * @param iterator
+     * @param episodeNumber
+     * @param service
+     * @param videoLink
+     * @return
+     */
+    private boolean delegateAvailableServiceToDownloadVideo(
+            Iterator<String> iterator, int episodeNumber, String service, String videoLink) {
+
+        try {
+            episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
+            resetFileCounter();
+            return true;
+        } catch (YoutubeDLException e) {
+            LOGGER.severe(e.getMessage());
+            deadlockCounter++;
+            fileMissing++;
+            exitSystemWhenInDeadlock(service);
+            writeDataToLogFile(episodeNumber, iterator);
+            LOGGER.info("[Service " + service + " Error]: Sending job to next available service");
         }
         return false;
     }
@@ -103,7 +124,7 @@ public class Service {
     private void exitSystemWhenInDeadlock(String service) {
         if (deadlockCounter == (ServiceEnum.NUMBER_OF_SERVICES.getValue() * 2)) {
             LOGGER.severe("[" + service + "]: Deadlock occurred");
-            System.exit(0);
+            System.exit(ServiceEnum.DEADLOCK.getValue());
         }
     }
 
@@ -115,9 +136,9 @@ public class Service {
      */
     private void resetFileCounter() {
         //Shared list must be kept up to date. If done with the url, remove it.
-        if (urlList.size() >= 1) {
+        if (urlList.size() >= ServiceEnum.MINIMUM_ENTRY_IN_THE_LIST.getValue()) {
             //reset counter
-            fileMissing = 0;
+            fileMissing = ServiceEnum.DEFAULT_FILE_MISSING.getValue();
         }
     }
 
@@ -128,8 +149,8 @@ public class Service {
      */
     private String getVideoLinkUrl(Elements serviceName) {
         String videoLink;
-        Element link = serviceName.select("a").first();
-        videoLink = link.attr("data-video");
+        Element link = serviceName.select(HtmlTagEnum.HREF_A_TAG.getValue()).first();
+        videoLink = link.attr(HtmlTagEnum.DATA_VIDEO.getValue());
         return videoLink;
     }
 
@@ -143,10 +164,10 @@ public class Service {
          ** Ideally list should be populated by parsing html tags,
          ** but not all of them are currently supported by youtube-dl...so...
          */
-        services.add("rapidvideo");
-        services.add("streamango");
-        services.add("anime");
-        services.add("vidcdn");
+        services.add(AvailableServicesEnum.RAPID_VIDEO.getValue());
+        services.add(AvailableServicesEnum.STREAMANGO.getValue());
+        services.add(AvailableServicesEnum.ANIME.getValue());
+        services.add(AvailableServicesEnum.VIDCDN.getValue());
 
         return services;
     }
@@ -157,7 +178,7 @@ public class Service {
      */
     private void writeDataToLogFile(int episodeNumber, Iterator<String> iterator) {
         if (fileMissing >= ServiceEnum.NUMBER_OF_SERVICES.getValue()) {
-            String filePath = episodeProcessor.buildDownloadDirectory();
+            String filePath = saveDirectoryBuilder.buildDownloadDirectory();
             String text = "Episode " + episodeNumber + " was not found.\n";
             try {
                 Files.write(Paths.get(filePath + "/logFile.log"), text.getBytes(UTF_8), CREATE, APPEND);

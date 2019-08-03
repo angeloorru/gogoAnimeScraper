@@ -8,11 +8,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import video_file_downloader.builders.SaveDirectoryBuilder;
 import video_file_downloader.enums.EpisodeDownloaderEnum;
 import video_file_downloader.enums.HtmlTagEnum;
 import video_file_downloader.enums.YouTubeDlRequestOptionEnum;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,7 @@ import static java.lang.Thread.sleep;
 public class EpisodeDownloader {
 
     private static final Logger LOGGER = Logger.getLogger(EpisodeDownloader.class.getName());
+    private final SaveDirectoryBuilder saveDirectoryBuilder = new SaveDirectoryBuilder(this);
     private WelcomeScreen welcomeScreen = new WelcomeScreen();
 
     private String URL_HOME = welcomeScreen.getUrlForDownload();
@@ -36,11 +37,23 @@ public class EpisodeDownloader {
     private String seriesYear = extractYear();
     private String folderName = buildFolderNameFromHtmlPage();
 
-    private final String directory = buildDownloadDirectory();
+    private final String directory = saveDirectoryBuilder.buildDownloadDirectory();
 
     private String[] endpoint;
 
     private int totalNumberOfEpisodes = getTotalNumberOfEpisodeFromHtmlPage();
+
+    public String getFolderName() {
+        return folderName;
+    }
+
+    public String[] getEndpoint() {
+        return endpoint;
+    }
+
+    public void setEndpoint(String[] endpoint) {
+        this.endpoint = endpoint;
+    }
 
     /**
      * @return Url for the request
@@ -314,100 +327,5 @@ public class EpisodeDownloader {
         request.setOption(YouTubeDlRequestOptionEnum.RETRIES.getValue(), 10);
 
         return request;
-    }
-
-    /**
-     * @return
-     * @desc Build the file path and folder name.
-     */
-    public String buildDownloadDirectory() {
-        String workingDirectory = System.getProperty(EpisodeDownloaderEnum.USER_DIR.getValue());
-        String absoluteFilePath = workingDirectory + File.separator;
-        String pathToSaveDownloadedFile = getPathToSaveFile(absoluteFilePath);
-
-        if (pathToSaveDownloadedFile != null) {
-            File pathToDestinationFolder = new File(pathToSaveDownloadedFile + folderName);
-
-            if (createDownloadDirectory(pathToDestinationFolder, isDirectoryCreated(pathToDestinationFolder))) {
-                return pathToDestinationFolder.toString();
-            }
-        } else {
-            LOGGER.severe("Cannot recognise the current Operating System");
-            System.exit(0);
-        }
-
-        return pathToSaveDownloadedFile + folderName;
-    }
-
-    /**
-     * @param absoluteFilePath
-     * @return
-     */
-    private String getPathToSaveFile(String absoluteFilePath) {
-        String pathToSaveDownloadedFile = null;
-
-        if (EpisodeDownloaderEnum.OPERATING_SYSTEM.getValue().contains(EpisodeDownloaderEnum.MAC.getValue()) ||
-                EpisodeDownloaderEnum.OPERATING_SYSTEM.getValue().contains(EpisodeDownloaderEnum.LINUX.getValue())) {
-
-            pathToSaveDownloadedFile = buildPathToSaveFileInUnix(absoluteFilePath);
-
-        } else if (EpisodeDownloaderEnum.OPERATING_SYSTEM.getValue().contains(EpisodeDownloaderEnum.WINDOWS.getValue())) {
-            pathToSaveDownloadedFile = buildPathToSaveFileInWindows(absoluteFilePath);
-        }
-        return pathToSaveDownloadedFile;
-    }
-
-    /**
-     * @param pathToDestinationFolder
-     * @return
-     */
-    private boolean isDirectoryCreated(File pathToDestinationFolder) {
-        return pathToDestinationFolder.exists();
-    }
-
-    /**
-     * @param absoluteFilePath
-     * @return
-     */
-    private String buildPathToSaveFileInUnix(String absoluteFilePath) {
-        String pathToSaveDownloadedFile;
-        endpoint = absoluteFilePath.split("/");
-
-        pathToSaveDownloadedFile = EpisodeDownloaderEnum.SEPARATOR_UNIX.getValue() +
-                endpoint[1] + EpisodeDownloaderEnum.SEPARATOR_UNIX.getValue() +
-                endpoint[2] + EpisodeDownloaderEnum.SEPARATOR_UNIX.getValue() +
-                EpisodeDownloaderEnum.DESTINATION_PATH.getValue() +
-                EpisodeDownloaderEnum.SEPARATOR_UNIX.getValue();
-
-        return pathToSaveDownloadedFile;
-    }
-
-    /**
-     * @param absoluteFilePath
-     * @return
-     */
-    private String buildPathToSaveFileInWindows(String absoluteFilePath) {
-        String pathToSaveDownloadedFile;
-        endpoint = absoluteFilePath.split("\\\\");
-
-        pathToSaveDownloadedFile = endpoint[0] + EpisodeDownloaderEnum.SEPARATOR_WINDOWS.getValue() + endpoint[1] +
-                EpisodeDownloaderEnum.SEPARATOR_WINDOWS.getValue() +
-                endpoint[2] + EpisodeDownloaderEnum.SEPARATOR_WINDOWS.getValue() +
-                EpisodeDownloaderEnum.DESTINATION_PATH.getValue() +
-                EpisodeDownloaderEnum.SEPARATOR_WINDOWS.getValue();
-
-        return pathToSaveDownloadedFile;
-    }
-
-    /**
-     * @param pathToDestinationFolder
-     * @param isDirectoryCreated
-     * @return
-     */
-    private boolean createDownloadDirectory(File pathToDestinationFolder, boolean isDirectoryCreated) {
-        if (!isDirectoryCreated) {
-            return pathToDestinationFolder.mkdir();
-        }
-        return false;
     }
 }
