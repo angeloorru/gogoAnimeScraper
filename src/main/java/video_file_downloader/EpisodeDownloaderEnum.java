@@ -8,6 +8,7 @@ public enum EpisodeDownloaderEnum {
     MAC("mac"),
     LINUX("linux"),
     WINDOWS("windows"),
+    USER_DIR("user.dir"),
     YEAR_NOT_AVAILABLE("0000");
 
     private String value;

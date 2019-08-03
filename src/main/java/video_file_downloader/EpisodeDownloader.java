@@ -133,10 +133,10 @@ public class EpisodeDownloader {
         try {
             doc = Jsoup.connect(URL_HOME).get();
 
-            Elements videoBody = doc.getElementsByClass("anime_video_body");
-            Element hrefContainer = videoBody.select("a").last();
+            Elements videoBody = doc.getElementsByClass(HtmlTagEnum.VIDEO_BODY_TAG.getValue());
+            Element hrefContainer = videoBody.select(HtmlTagEnum.HREF_A_TAG.getValue()).last();
 
-            String lastEpisodeAsString = hrefContainer.attr("ep_end");
+            String lastEpisodeAsString = hrefContainer.attr(HtmlTagEnum.LAST_EPISODE_TAG.getValue());
 
             if (lastEpisodeAsString != null) {
                 lastEpisode = Integer.parseInt(lastEpisodeAsString.split("\\.")[0]);
@@ -211,8 +211,8 @@ public class EpisodeDownloader {
 
         doc = Jsoup.connect(URL_HOME).get();
 
-        Elements productName = doc.getElementsByClass("anime_info_body_bg");
-        String htmlTitle = productName.select("h1").first().toString();
+        Elements productName = doc.getElementsByClass(HtmlTagEnum.PRODUCT_NAME_TAG.getValue());
+        String htmlTitle = productName.select(HtmlTagEnum.TITLE_TAG.getValue()).first().toString();
 
         doc = Jsoup.parse(htmlTitle);
 
@@ -235,7 +235,7 @@ public class EpisodeDownloader {
             LOGGER.info("Attempting to build the file year");
             doc = Jsoup.connect(URL_HOME).get();
 
-            Elements releasedYear = doc.getElementsByClass("type");
+            Elements releasedYear = doc.getElementsByClass(HtmlTagEnum.RELEASE_YEAR_TAG.getValue());
 
             for (Element span : releasedYear) {
                 if (span.text().contains(RELEASED)) {
@@ -263,9 +263,9 @@ public class EpisodeDownloader {
     private YoutubeDLRequest buildYoutubeDLRequest(String link, String fileName) {
         YoutubeDLRequest request = new YoutubeDLRequest(link, directory);
 
-        request.setOption("ignore-errors");
-        request.setOption("output", fileName);
-        request.setOption("retries", 10);
+        request.setOption(YouTubeDlRequestOptionEnum.IGNORE_ERRORS.getValue());
+        request.setOption(YouTubeDlRequestOptionEnum.OUTPUT.getValue(), fileName);
+        request.setOption(YouTubeDlRequestOptionEnum.RETRIES.getValue(), 10);
 
         return request;
     }
@@ -275,7 +275,7 @@ public class EpisodeDownloader {
      * @desc Build the file path and folder name.
      */
     public String buildDownloadDirectory() {
-        String workingDirectory = System.getProperty("user.dir");
+        String workingDirectory = System.getProperty(EpisodeDownloaderEnum.USER_DIR.getValue());
         String absoluteFilePath = workingDirectory + File.separator;
         String pathToSaveDownloadedFile = null;
 
@@ -291,9 +291,7 @@ public class EpisodeDownloader {
         if (pathToSaveDownloadedFile != null) {
             File pathToDestinationFolder = new File(pathToSaveDownloadedFile + folderName);
 
-            boolean isDirectoryCreated = pathToDestinationFolder.exists();
-
-            if (createDownloadDirectory(pathToDestinationFolder, isDirectoryCreated)) {
+            if (createDownloadDirectory(pathToDestinationFolder, isDirectoryCreated(pathToDestinationFolder))) {
                 return pathToDestinationFolder.toString();
             }
         } else {
@@ -302,6 +300,15 @@ public class EpisodeDownloader {
         }
 
         return pathToSaveDownloadedFile + folderName;
+    }
+
+    /**
+     *
+     * @param pathToDestinationFolder
+     * @return
+     */
+    private boolean isDirectoryCreated(File pathToDestinationFolder) {
+        return pathToDestinationFolder.exists();
     }
 
     /**
