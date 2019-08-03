@@ -26,18 +26,16 @@ public class EpisodeDownloader {
     private String URL_HOME = welcomeScreen.getUrlForDownload();
     private int FROM_EPISODE = welcomeScreen.getNumberOfEpisodeToStartDownload();
 
-    private static final String DESTINATION_PATH = "Desktop";
-    private static final String SEPARATOR_UNIX = "/";
-    private static final String SEPARATOR_WINDOWS = "\\";
-    private static final String OPERATING_SYSTEM = System.getProperty("os.name").toLowerCase();
-
     private static int episodeCounter = 1;
 
     private String URL = buildUrlForDownloadByEpisode(URL_HOME);
     private String seriesTitle = extractFileNameFromHtmlPage();
     private String seriesYear = extractYear();
     private String folderName = buildFolderNameFromHtmlPage();
+
     private final String directory = buildDownloadDirectory();
+
+    private String[] endpoint;
 
     private int totalNumberOfEpisodes = getTotalNumberOfEpisodeFromHtmlPage();
 
@@ -82,13 +80,20 @@ public class EpisodeDownloader {
 
         if (response.getExitCode() == 0) {
             LOGGER.info("File " + fileName + " downloaded successfully");
-            if (Integer.valueOf(episodeNumber) < totalNumberOfEpisodes) {
-                try {
-                    LOGGER.info("Pausing for 20 seconds now...");
-                    sleep(20000);
-                } catch (InterruptedException e) {
-                    LOGGER.severe(e.getMessage());
-                }
+            pauseTheDownload(episodeNumber);
+        }
+    }
+
+    /**
+     * @param episodeNumber
+     */
+    private void pauseTheDownload(String episodeNumber) {
+        if (Integer.parseInt(episodeNumber) < totalNumberOfEpisodes) {
+            try {
+                LOGGER.info("Pausing for 20 seconds now...");
+                sleep(20000);
+            } catch (InterruptedException e) {
+                LOGGER.severe(e.getMessage());
             }
         }
     }
@@ -134,7 +139,7 @@ public class EpisodeDownloader {
             String lastEpisodeAsString = hrefContainer.attr("ep_end");
 
             if (lastEpisodeAsString != null) {
-                lastEpisode = Integer.valueOf(lastEpisodeAsString.split("\\.")[0]);
+                lastEpisode = Integer.parseInt(lastEpisodeAsString.split("\\.")[0]);
             }
 
         } catch (IOException e) {
@@ -224,7 +229,7 @@ public class EpisodeDownloader {
     private String extractYear() {
         String year = null;
         Document doc;
-        final String ELEMENT_TO_SEARCH_FOR = "Released:";
+        final String RELEASED = "Released:";
 
         try {
             LOGGER.info("Attempting to build the file year");
@@ -233,8 +238,8 @@ public class EpisodeDownloader {
             Elements releasedYear = doc.getElementsByClass("type");
 
             for (Element span : releasedYear) {
-                if (span.text().contains(ELEMENT_TO_SEARCH_FOR)) {
-                    year = span.text().replace(" ", "").replace(ELEMENT_TO_SEARCH_FOR, "");
+                if (span.text().contains(RELEASED)) {
+                    year = span.text().replace(" ", "").replace(RELEASED, "");
                 }
             }
         } catch (IOException e) {
@@ -273,30 +278,76 @@ public class EpisodeDownloader {
     public String buildDownloadDirectory() {
         String workingDirectory = System.getProperty("user.dir");
         String absoluteFilePath = workingDirectory + File.separator;
-        String[] endpoint;
-        String pathToSaveDownloadedFile;
+        String pathToSaveDownloadedFile = null;
 
-        if (OPERATING_SYSTEM.contains("mac") || OPERATING_SYSTEM.contains("linux")) {
-            endpoint = absoluteFilePath.split("/");
-            pathToSaveDownloadedFile = SEPARATOR_UNIX + endpoint[1] + SEPARATOR_UNIX +
-                    endpoint[2] + SEPARATOR_UNIX + DESTINATION_PATH + SEPARATOR_UNIX;
-        } else {
-            endpoint = absoluteFilePath.split("\\\\");
-            pathToSaveDownloadedFile = SEPARATOR_WINDOWS + endpoint[1] + SEPARATOR_WINDOWS +
-                    endpoint[2] + SEPARATOR_WINDOWS + DESTINATION_PATH + SEPARATOR_WINDOWS;
+        if (EpisodeDownloaderEnum.OPERATING_SYSTEM.getValue().contains(EpisodeDownloaderEnum.MAC.getValue()) ||
+                EpisodeDownloaderEnum.OPERATING_SYSTEM.getValue().contains(EpisodeDownloaderEnum.LINUX.getValue())) {
+
+            pathToSaveDownloadedFile = buildPathToSaveFileInUnix(absoluteFilePath);
+
+        } else if (EpisodeDownloaderEnum.OPERATING_SYSTEM.getValue().contains(EpisodeDownloaderEnum.WINDOWS.getValue())) {
+            pathToSaveDownloadedFile = buildPathToSaveFileInWindows(absoluteFilePath);
         }
 
-        File pathToDestinationFolder = new File(pathToSaveDownloadedFile + folderName);
+        if (pathToSaveDownloadedFile != null) {
+            File pathToDestinationFolder = new File(pathToSaveDownloadedFile + folderName);
 
-        boolean isDirectoryCreated = pathToDestinationFolder.exists();
+            boolean isDirectoryCreated = pathToDestinationFolder.exists();
 
-        if (!isDirectoryCreated) {
-            boolean mkdir = pathToDestinationFolder.mkdir();
-
-            if (mkdir) {
+            if (createDownloadDirectory(pathToDestinationFolder, isDirectoryCreated)) {
                 return pathToDestinationFolder.toString();
             }
+        } else {
+            LOGGER.severe("Cannot recognise the current Operating System");
+            System.exit(0);
         }
-        return pathToDestinationFolder.toString();
+
+        return pathToSaveDownloadedFile + folderName;
+    }
+
+    /**
+     * @param absoluteFilePath
+     * @return
+     */
+    private String buildPathToSaveFileInUnix(String absoluteFilePath) {
+        String pathToSaveDownloadedFile;
+        endpoint = absoluteFilePath.split("/");
+
+        pathToSaveDownloadedFile = EpisodeDownloaderEnum.SEPARATOR_UNIX.getValue() +
+                endpoint[1] + EpisodeDownloaderEnum.SEPARATOR_UNIX.getValue() +
+                endpoint[2] + EpisodeDownloaderEnum.SEPARATOR_UNIX.getValue() +
+                EpisodeDownloaderEnum.DESTINATION_PATH.getValue() +
+                EpisodeDownloaderEnum.SEPARATOR_UNIX.getValue();
+
+        return pathToSaveDownloadedFile;
+    }
+
+    /**
+     * @param absoluteFilePath
+     * @return
+     */
+    private String buildPathToSaveFileInWindows(String absoluteFilePath) {
+        String pathToSaveDownloadedFile;
+        endpoint = absoluteFilePath.split("\\\\");
+
+        pathToSaveDownloadedFile = endpoint[0] + EpisodeDownloaderEnum.SEPARATOR_WINDOWS.getValue() + endpoint[1] +
+                EpisodeDownloaderEnum.SEPARATOR_WINDOWS.getValue() +
+                endpoint[2] + EpisodeDownloaderEnum.SEPARATOR_WINDOWS.getValue() +
+                EpisodeDownloaderEnum.DESTINATION_PATH.getValue() +
+                EpisodeDownloaderEnum.SEPARATOR_WINDOWS.getValue();
+
+        return pathToSaveDownloadedFile;
+    }
+
+    /**
+     * @param pathToDestinationFolder
+     * @param isDirectoryCreated
+     * @return
+     */
+    private boolean createDownloadDirectory(File pathToDestinationFolder, boolean isDirectoryCreated) {
+        if (!isDirectoryCreated) {
+            return pathToDestinationFolder.mkdir();
+        }
+        return false;
     }
 }

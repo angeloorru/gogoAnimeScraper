@@ -24,11 +24,12 @@ import static java.nio.file.StandardOpenOption.CREATE;
 public class Service {
 
     private static final Logger LOGGER = Logger.getLogger(Service.class.getName());
-    private static final int NUMBER_OF_SERVICES = 4;
 
     private EpisodeDownloader episodeProcessor = new EpisodeDownloader();
-    private List<String> urlList = episodeProcessor.constructUrlForRequest();
     private Helpers helpers = new Helpers();
+
+    private List<String> urlList = episodeProcessor.constructUrlForRequest();
+
     private int deadlockCounter = 0;
     private int fileMissing = 0;
 
@@ -100,7 +101,7 @@ public class Service {
      * The service will typically throw an exception to increment the counter.
      */
     private void exitSystemWhenInDeadlock(String service) {
-        if (deadlockCounter == (NUMBER_OF_SERVICES * 2)) {
+        if (deadlockCounter == (ServiceEnum.NUMBER_OF_SERVICES.getValue() * 2)) {
             LOGGER.severe("[" + service + "]: Deadlock occurred");
             System.exit(0);
         }
@@ -155,7 +156,7 @@ public class Service {
      * @desc Log file
      */
     private void writeDataToLogFile(int episodeNumber, Iterator<String> iterator) {
-        if (fileMissing >= NUMBER_OF_SERVICES) {
+        if (fileMissing >= ServiceEnum.NUMBER_OF_SERVICES.getValue()) {
             String filePath = episodeProcessor.buildDownloadDirectory();
             String text = "Episode " + episodeNumber + " was not found.\n";
             try {
