@@ -8,8 +8,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import video_file_downloader.builders.FileYearBuilder;
 import video_file_downloader.builders.SaveDirectoryBuilder;
-import video_file_downloader.enums.EpisodeDownloaderEnum;
 import video_file_downloader.enums.HtmlTagEnum;
 import video_file_downloader.enums.YouTubeDlRequestOptionEnum;
 
@@ -25,16 +25,17 @@ public class EpisodeDownloader {
 
     private static final Logger LOGGER = Logger.getLogger(EpisodeDownloader.class.getName());
     private final SaveDirectoryBuilder saveDirectoryBuilder = new SaveDirectoryBuilder(this);
+    private final FileYearBuilder fileYearBuilder = new FileYearBuilder(this);
     private WelcomeScreen welcomeScreen = new WelcomeScreen();
 
-    private String URL_HOME = welcomeScreen.getUrlForDownload();
+    private String urlHome = welcomeScreen.getUrlForDownload();
     private int FROM_EPISODE = welcomeScreen.getNumberOfEpisodeToStartDownload();
 
     private static int episodeCounter = 1;
 
-    private String URL = buildUrlForDownloadByEpisode(URL_HOME);
+    private String URL = buildUrlForDownloadByEpisode(urlHome);
     private String seriesTitle = extractFileNameFromHtmlPage();
-    private String seriesYear = extractYear();
+    private String seriesYear = fileYearBuilder.extractYear();
     private String folderName = buildFolderNameFromHtmlPage();
 
     private final String directory = saveDirectoryBuilder.buildDownloadDirectory();
@@ -45,6 +46,10 @@ public class EpisodeDownloader {
 
     public String getFolderName() {
         return folderName;
+    }
+
+    public String getUrlHome() {
+        return urlHome;
     }
 
     public String[] getEndpoint() {
@@ -173,7 +178,7 @@ public class EpisodeDownloader {
         Document doc;
 
         try {
-            doc = Jsoup.connect(URL_HOME).get();
+            doc = Jsoup.connect(urlHome).get();
 
             Elements videoBody = doc.getElementsByClass(HtmlTagEnum.VIDEO_BODY_TAG.getValue());
             Element hrefContainer = videoBody.select(HtmlTagEnum.HREF_A_TAG.getValue()).last();
@@ -251,7 +256,7 @@ public class EpisodeDownloader {
         Document doc;
         String title;
 
-        doc = Jsoup.connect(URL_HOME).get();
+        doc = Jsoup.connect(urlHome).get();
 
         Elements productName = doc.getElementsByClass(HtmlTagEnum.PRODUCT_NAME_TAG.getValue());
         String htmlTitle = productName.select(HtmlTagEnum.TITLE_TAG.getValue()).first().toString();
@@ -262,54 +267,6 @@ public class EpisodeDownloader {
         title = title.replace(" (Dub)", "");
         title = title.replaceAll(": ", ":");
         return title;
-    }
-
-    /**
-     * @return
-     * @desc Extracts the year of the serie by scraping the html page
-     */
-    private String extractYear() {
-        String year = null;
-        Document doc;
-
-        try {
-            LOGGER.info("Attempting to build the file year");
-            doc = Jsoup.connect(URL_HOME).get();
-
-            Elements releasedYear = doc.getElementsByClass(HtmlTagEnum.RELEASE_YEAR_TAG.getValue());
-            year = searchForYearString(releasedYear);
-        } catch (IOException e) {
-            LOGGER.severe(e.getMessage());
-        }
-        if (isReleasedYearAvailable(year)) {
-            year = EpisodeDownloaderEnum.YEAR_NOT_AVAILABLE.getValue();
-        }
-        LOGGER.info("File year [" + year + "] built");
-        return year;
-    }
-
-    /**
-     * @param year
-     * @return
-     */
-    private boolean isReleasedYearAvailable(String year) {
-        return year == null || year.equals("0");
-    }
-
-    /**
-     * @param releasedYear
-     * @return
-     */
-    private String searchForYearString(Elements releasedYear) {
-        String year = null;
-
-        for (Element span : releasedYear) {
-            if (span.text().contains(EpisodeDownloaderEnum.RELEASED.getValue())) {
-                year = span.text().replace(" ", "")
-                        .replace(EpisodeDownloaderEnum.RELEASED.getValue(), "");
-            }
-        }
-        return year;
     }
 
     /**
