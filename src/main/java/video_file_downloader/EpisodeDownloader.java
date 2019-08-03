@@ -247,8 +247,7 @@ public class EpisodeDownloader {
         }
 
         if (year == null || year.equals("0")) {
-            //TODO: Check info in wikipedia .... or something
-            throw new RuntimeException("Year value is empty. You may want to change it manually for now.");
+            return EpisodeDownloaderEnum.YEAR_NOT_AVAILABLE.getValue();
         }
         LOGGER.info("File year [" + year + "] built");
         return year;

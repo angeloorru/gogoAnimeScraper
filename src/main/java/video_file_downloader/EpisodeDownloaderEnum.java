@@ -7,7 +7,8 @@ public enum EpisodeDownloaderEnum {
     OPERATING_SYSTEM(System.getProperty("os.name").toLowerCase()),
     MAC("mac"),
     LINUX("linux"),
-    WINDOWS("windows");
+    WINDOWS("windows"),
+    YEAR_NOT_AVAILABLE("0000");
 
     private String value;
 
