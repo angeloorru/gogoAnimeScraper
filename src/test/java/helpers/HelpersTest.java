@@ -34,7 +34,7 @@ public class HelpersTest {
     public void testThatAnEpisodeIsAvailable() throws IOException {
         Document doc;
         doc = Jsoup.connect("https://www2.gogoanime.io/saint-seiya-omega-episode-75").get();
-        Elements elements = doc.getElementsByClass("rapidvideo");
+        Elements elements = doc.getElementsByClass("vidcdn");
 
         assertTrue("", helpers.isEpisodeAvailable(elements));
     }
