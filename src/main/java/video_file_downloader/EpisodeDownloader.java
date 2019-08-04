@@ -106,7 +106,7 @@ public class EpisodeDownloader {
 
         YoutubeDLResponse response = executeYouTubeDLRequest(request);
 
-        pauseDownloadWhenFinishedSuccessfully(episodeNumber, fileName, response);
+        askToPauseDownloadWhenFinishedSuccessfully(episodeNumber, fileName, response);
     }
 
     /**
@@ -126,7 +126,7 @@ public class EpisodeDownloader {
      * @param fileName
      * @param response
      */
-    private void pauseDownloadWhenFinishedSuccessfully(
+    private void askToPauseDownloadWhenFinishedSuccessfully(
             String episodeNumber, String fileName, YoutubeDLResponse response) {
 
         if (response.getExitCode() == 0) {
