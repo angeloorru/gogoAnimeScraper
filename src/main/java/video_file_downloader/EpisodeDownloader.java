@@ -115,7 +115,9 @@ public class EpisodeDownloader {
      * @param fileName
      * @param response
      */
-    private void pauseDownloadWhenFinishedSuccessfully(String episodeNumber, String fileName, YoutubeDLResponse response) {
+    private void pauseDownloadWhenFinishedSuccessfully(
+            String episodeNumber, String fileName, YoutubeDLResponse response) {
+
         if (response.getExitCode() == 0) {
             LOGGER.info("File " + fileName + " downloaded successfully");
             pauseTheDownload(episodeNumber);
@@ -158,19 +160,6 @@ public class EpisodeDownloader {
     }
 
     /**
-     * @param episodeNumber
-     * @param seriesTitle
-     * @param seriesYear
-     * @return The file name
-     * @desc Build the file name
-     */
-    private String buildFileName(String episodeNumber, String seriesTitle, String seriesYear) {
-        return totalNumberOfEpisodes > 1 ?
-                seriesTitle + "_Episode-" + episodeNumber + "_(" + seriesYear + ").mp4" :
-                seriesTitle + "_(" + seriesYear + ").mp4";
-    }
-
-    /**
      * @return The total number of episodes
      */
     private int getTotalNumberOfEpisodeFromHtmlPage() {
@@ -207,6 +196,19 @@ public class EpisodeDownloader {
         } else {
             return String.valueOf(episodeCounter);
         }
+    }
+
+    /**
+     * @param episodeNumber
+     * @param seriesTitle
+     * @param seriesYear
+     * @return The file name
+     * @desc Build the file name
+     */
+    private String buildFileName(String episodeNumber, String seriesTitle, String seriesYear) {
+        return totalNumberOfEpisodes > 1 ?
+                seriesTitle + "_Episode-" + episodeNumber + "_(" + seriesYear + ").mp4" :
+                seriesTitle + "_(" + seriesYear + ").mp4";
     }
 
     /**
