@@ -51,9 +51,9 @@ public class Service {
             try {
                 doc = Jsoup.connect(url).get();
                 int episodeNumber = helpers.getEpisodeNumberForSettingCounter(url);
-                List<String> urlLinks = getDivElementsFromService();
+                List<String> urlLinks = getServiceFromDivElement();
 
-                if (sendUrlVideoDataToYouTubeDl(iterator, doc, episodeNumber, urlLinks)) {
+                if (delegateAvailableServiceToDownloadVideo(iterator, doc, episodeNumber, urlLinks)) {
                     iterator.remove();
                 }
 
@@ -70,7 +70,7 @@ public class Service {
      * @param urlLinks
      * @desc Accepts a video url to make the request to yoytube-dl.
      */
-    private boolean sendUrlVideoDataToYouTubeDl(
+    private boolean delegateAvailableServiceToDownloadVideo(
             Iterator<String> iterator, Document doc, int episodeNumber, List<String> urlLinks) {
 
         for (String service : urlLinks) {
@@ -79,7 +79,7 @@ public class Service {
             if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
                 String videoLink = getVideoLinkUrl(serviceName);
                 LOGGER.info("[Service " + service + "]: Sending link " + videoLink + " to youtube-dl");
-                if (delegateAvailableServiceToDownloadVideo(iterator, episodeNumber, service, videoLink)) {
+                if (sendUrlVideoDataToYouTubeDl(iterator, episodeNumber, service, videoLink)) {
                     return true;
                 }
             } else {
@@ -98,7 +98,7 @@ public class Service {
      * @param videoLink
      * @return
      */
-    private boolean delegateAvailableServiceToDownloadVideo(
+    private boolean sendUrlVideoDataToYouTubeDl(
             Iterator<String> iterator, int episodeNumber, String service, String videoLink) {
 
         try {
@@ -158,7 +158,7 @@ public class Service {
      * @return The list of services.
      * @desc A static list of all the available Go Go Anime services
      */
-    private List<String> getDivElementsFromService() {
+    private List<String> getServiceFromDivElement() {
         List<String> services = new ArrayList<>();
         /*
          ** Ideally list should be populated by parsing html tags,
