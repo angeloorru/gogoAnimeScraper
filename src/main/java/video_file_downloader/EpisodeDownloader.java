@@ -8,10 +8,11 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import video_file_downloader.builders.FileNameBuilder;
 import video_file_downloader.builders.FileYearBuilder;
 import video_file_downloader.builders.SaveDirectoryBuilder;
+import video_file_downloader.builders.YouTubeDlRequestBuilder;
 import video_file_downloader.enums.HtmlTagEnum;
-import video_file_downloader.enums.YouTubeDlRequestOptionEnum;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,12 +27,14 @@ public class EpisodeDownloader {
     private static final Logger LOGGER = Logger.getLogger(EpisodeDownloader.class.getName());
     private final SaveDirectoryBuilder saveDirectoryBuilder = new SaveDirectoryBuilder(this);
     private final FileYearBuilder fileYearBuilder = new FileYearBuilder(this);
+    private final YouTubeDlRequestBuilder youTubeDlRequestBuilder = new YouTubeDlRequestBuilder(this);
+    private final FileNameBuilder fileNameBuilder = new FileNameBuilder(this);
     private WelcomeScreen welcomeScreen = new WelcomeScreen();
 
     private String urlHome = welcomeScreen.getUrlForDownload();
     private int FROM_EPISODE = welcomeScreen.getNumberOfEpisodeToStartDownload();
 
-    private static int episodeCounter = 1;
+    public static int episodeCounter = 1;
 
     private String URL = buildUrlForDownloadByEpisode(urlHome);
     private String seriesTitle = extractFileNameFromHtmlPage();
@@ -54,6 +57,14 @@ public class EpisodeDownloader {
 
     public String[] getEndpoint() {
         return endpoint;
+    }
+
+    public String getDirectory() {
+        return directory;
+    }
+
+    public int getTotalNumberOfEpisodes() {
+        return totalNumberOfEpisodes;
     }
 
     public void setEndpoint(String[] endpoint) {
@@ -85,10 +96,10 @@ public class EpisodeDownloader {
 
         setEpisodeCounter(episodeNumberFromService);
 
-        String episodeNumber = buildFileNameIfLessThanTenEpisodes();
-        String fileName = buildFileName(String.valueOf(episodeCounter), seriesTitle, seriesYear);
+        String episodeNumber = fileNameBuilder.buildFileNameIfLessThanTenEpisodes();
+        String fileName = fileNameBuilder.buildFileName(String.valueOf(episodeCounter), seriesTitle, seriesYear);
 
-        YoutubeDLRequest request = buildYoutubeDLRequest(link, fileName);
+        YoutubeDLRequest request = youTubeDlRequestBuilder.buildYoutubeDLRequest(link, fileName);
 
         LOGGER.info("For Link " + link + ": Attempting to download " +
                 fileName + " [ Episode " + episodeCounter + " of " + totalNumberOfEpisodes + " ]");
@@ -185,40 +196,13 @@ public class EpisodeDownloader {
     }
 
     /**
-     * @return The counter used for setting up the current number of episodes
-     */
-    private String buildFileNameIfLessThanTenEpisodes() {
-
-        String appendBeforeEpisode = "0";
-
-        if (episodeCounter < 10) {
-            return appendBeforeEpisode + episodeCounter;
-        } else {
-            return String.valueOf(episodeCounter);
-        }
-    }
-
-    /**
-     * @param episodeNumber
-     * @param seriesTitle
-     * @param seriesYear
-     * @return The file name
-     * @desc Build the file name
-     */
-    private String buildFileName(String episodeNumber, String seriesTitle, String seriesYear) {
-        return totalNumberOfEpisodes > 1 ?
-                seriesTitle + "_Episode-" + episodeNumber + "_(" + seriesYear + ").mp4" :
-                seriesTitle + "_(" + seriesYear + ").mp4";
-    }
-
-    /**
      * @return
      * @desc Builds the folder name from the episode title.
      */
     private String buildFolderNameFromHtmlPage() {
         String folderName = null;
         try {
-            folderName = getInfoForTitleAndFolder();
+            folderName = getInfoForTitleAndFolderFromHtmlPage();
         } catch (IOException e) {
             LOGGER.severe(e.getMessage());
         }
@@ -237,7 +221,7 @@ public class EpisodeDownloader {
     private String extractFileNameFromHtmlPage() {
         String title = null;
         try {
-            title = getInfoForTitleAndFolder();
+            title = getInfoForTitleAndFolderFromHtmlPage();
         } catch (IOException e) {
             LOGGER.severe(e.getMessage());
         }
@@ -254,7 +238,7 @@ public class EpisodeDownloader {
      * @throws IOException
      * @desc Scraps tags content useful for building the file name and folder's name
      */
-    private String getInfoForTitleAndFolder() throws IOException {
+    private String getInfoForTitleAndFolderFromHtmlPage() throws IOException {
         Document doc;
         String title;
 
@@ -269,22 +253,5 @@ public class EpisodeDownloader {
         title = title.replace(" (Dub)", "");
         title = title.replaceAll(": ", ":");
         return title;
-    }
-
-    /**
-     * @param link
-     * @param fileName
-     * @return
-     * @desc Needed for the request setup for youtube-dl.
-     * Allow to setup error handlers, file name and number of re-tries
-     */
-    private YoutubeDLRequest buildYoutubeDLRequest(String link, String fileName) {
-        YoutubeDLRequest request = new YoutubeDLRequest(link, directory);
-
-        request.setOption(YouTubeDlRequestOptionEnum.IGNORE_ERRORS.getValue());
-        request.setOption(YouTubeDlRequestOptionEnum.OUTPUT.getValue(), fileName);
-        request.setOption(YouTubeDlRequestOptionEnum.RETRIES.getValue(), 10);
-
-        return request;
     }
 }
