@@ -79,7 +79,7 @@ public class Service {
             if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
                 String videoLink = getVideoLinkUrl(serviceName);
                 LOGGER.info("[Service " + service + "]: Sending link " + videoLink + " to youtube-dl");
-                if (sendUrlVideoDataToYouTubeDl(iterator, episodeNumber, service, videoLink)) {
+                if (sendUrlVideoInfoToYouTubeDl(iterator, episodeNumber, service, videoLink)) {
                     return true;
                 }
             } else {
@@ -98,7 +98,7 @@ public class Service {
      * @param videoLink
      * @return
      */
-    private boolean sendUrlVideoDataToYouTubeDl(
+    private boolean sendUrlVideoInfoToYouTubeDl(
             Iterator<String> iterator, int episodeNumber, String service, String videoLink) {
 
         try {
