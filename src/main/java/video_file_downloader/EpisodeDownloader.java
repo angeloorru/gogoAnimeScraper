@@ -251,7 +251,7 @@ public class EpisodeDownloader {
 
         title = doc.body().text();
         title = title.replace(" (Dub)", "");
-        title = title.replaceAll(": ", ":");
+        title = title.replaceAll(": ", "_");
         return title;
     }
 }
