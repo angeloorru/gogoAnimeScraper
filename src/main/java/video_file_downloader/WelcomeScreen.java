@@ -19,16 +19,21 @@ class WelcomeScreen {
             urlForDownload = urlForDownload.replace(" ", "");
 
             if (helpers.isValidUrl(urlForDownload)) {
-                if (urlForDownload.contains("/category/")) {
-                    return urlForDownload;
-                } else {
-                    System.out.println("\nNot a GoGoAnime URL.\nExample of correct url is: https://www2.gogoanime.io/category/....\n");
-                    System.out.println("The correct URL, can be seen in the web page where all the episodes are listed.\n");
-                }
+                if (validateUrlForDownload(urlForDownload)) return urlForDownload;
             } else {
                 System.out.println("The url is not valid. Please enter a valid Url.\n");
             }
         }
+    }
+
+    private boolean validateUrlForDownload(String urlForDownload) {
+        if (urlForDownload.contains("/category/")) {
+            return true;
+        } else {
+            System.out.println("\nNot the correct GoGoAnime URL.\nExample of correct url is: https://www2.gogoanime.io/category/....\n");
+            System.out.println("The correct URL, can be seen in the web page where all the episodes are listed.\n");
+        }
+        return false;
     }
 
     int getNumberOfEpisodeToStartDownload() {
