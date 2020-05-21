@@ -3,10 +3,15 @@ package video_file_downloader.builders;
 import video_file_downloader.EpisodeDownloader;
 
 public class FileNameBuilder {
+    //TODO: Improve line below
     private final EpisodeDownloader episodeDownloader;
 
     public FileNameBuilder(EpisodeDownloader episodeDownloader) {
         this.episodeDownloader = episodeDownloader;
+    }
+
+    public FileNameBuilder() {
+        episodeDownloader = null;
     }
 
     /**
@@ -30,8 +35,8 @@ public class FileNameBuilder {
      * @return The file name
      * @desc Build the file name
      */
-    public String buildFileName(String episodeNumber, String seriesTitle, String seriesYear) {
-        return episodeDownloader.getTotalNumberOfEpisodes() > 1 ?
+    public String buildFileName(int totalNumberOfEpisodes, String episodeNumber, String seriesTitle, String seriesYear) {
+        return totalNumberOfEpisodes > 1 ?
                 seriesTitle + "_Episode-" + episodeNumber + "_(" + seriesYear + ").mp4" :
                 seriesTitle + "_(" + seriesYear + ").mp4";
     }

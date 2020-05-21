@@ -29,23 +29,23 @@ public class EpisodeDownloader {
     private final FileYearBuilder fileYearBuilder = new FileYearBuilder(this);
     private final YouTubeDlRequestBuilder youTubeDlRequestBuilder = new YouTubeDlRequestBuilder(this);
     private final FileNameBuilder fileNameBuilder = new FileNameBuilder(this);
-    private WelcomeScreen welcomeScreen = new WelcomeScreen();
+    private final WelcomeScreen welcomeScreen = new WelcomeScreen();
 
-    private String urlHome = welcomeScreen.getUrlForDownload();
-    private int FROM_EPISODE = welcomeScreen.askForStartingNumberOfEpisode();
+    private final String urlHome = welcomeScreen.getUrlForDownload();
+    private final int FROM_EPISODE = welcomeScreen.askForStartingNumberOfEpisode();
 
     public static int episodeCounter = 1;
 
-    private String URL = buildUrlForDownloadByEpisode(urlHome);
-    private String seriesTitle = extractFileNameFromHtmlPage();
-    private String seriesYear = fileYearBuilder.extractYear();
-    private String folderName = buildFolderNameFromHtmlPage();
+    private final String URL = buildUrlForDownloadByEpisode(urlHome);
+    private final String seriesTitle = extractFileNameFromHtmlPage();
+    private final String seriesYear = fileYearBuilder.extractYear();
+    private final String folderName = buildFolderNameFromHtmlPage();
 
     private final String directory = saveDirectoryBuilder.buildDownloadDirectory();
 
     private String[] endpoint;
 
-    private int totalNumberOfEpisodes = getTotalNumberOfEpisodeFromHtmlPage();
+    private final int totalNumberOfEpisodes = getTotalNumberOfEpisodeFromHtmlPage();
 
     public String getFolderName() {
         return folderName;
@@ -63,9 +63,9 @@ public class EpisodeDownloader {
         return directory;
     }
 
-    public int getTotalNumberOfEpisodes() {
+    /*public int getTotalNumberOfEpisodes() {
         return totalNumberOfEpisodes;
-    }
+    }*/
 
     public void setEndpoint(String[] endpoint) {
         this.endpoint = endpoint;
@@ -97,7 +97,8 @@ public class EpisodeDownloader {
         setEpisodeCounter(episodeNumberFromService);
 
         String episodeNumber = fileNameBuilder.buildFileNameIfLessThanTenEpisodes();
-        String fileName = fileNameBuilder.buildFileName(String.valueOf(episodeCounter), seriesTitle, seriesYear);
+        String fileName = fileNameBuilder.
+                buildFileName(totalNumberOfEpisodes, String.valueOf(episodeCounter), seriesTitle, seriesYear);
 
         YoutubeDLRequest request = youTubeDlRequestBuilder.buildYoutubeDLRequest(link, fileName);
 
