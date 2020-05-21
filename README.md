@@ -47,13 +47,12 @@ Windows:
 <hr>
 
 <h2>Program Execution</h2>
-<h3> The app is ready for build with all it's dependencies. To do so run: mvn package.<br>
-Alternatively you can download the jar file above.
-
+<h3> The app is ready for build with all it's dependencies. To do so run: "mvn package", 
+to generate the executable jar with dependencies that can be found from inside the target folder of the project.
 </h3>
 Assuming that Java is correctly installed in your computer (i.e path set up correctly), 
 open the terminal, navigate to the location of the .jar file (i.e. \Desktop) and 
-paste the following line: java -jar GoGoAnimeDownloader-1.x.jar
+paste the following line: java -jar GoGoAnimeDownloader-3.0.jar
 <br>
 Follow the instructions displayed in the console. 
 <br>
