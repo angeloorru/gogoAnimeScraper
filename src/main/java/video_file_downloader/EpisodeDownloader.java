@@ -32,7 +32,7 @@ public class EpisodeDownloader {
     private WelcomeScreen welcomeScreen = new WelcomeScreen();
 
     private String urlHome = welcomeScreen.getUrlForDownload();
-    private int FROM_EPISODE = welcomeScreen.getNumberOfEpisodeToStartDownload();
+    private int FROM_EPISODE = welcomeScreen.askForStartingNumberOfEpisode();
 
     public static int episodeCounter = 1;
 

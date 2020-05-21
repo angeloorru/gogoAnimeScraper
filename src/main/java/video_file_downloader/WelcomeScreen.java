@@ -6,9 +6,9 @@ import java.util.Scanner;
 
 class WelcomeScreen {
 
-    private Helpers helpers = new Helpers();
+    private final Helpers helpers = new Helpers();
 
-    String getUrlForDownload() {
+    protected String getUrlForDownload() {
         String urlForDownload;
 
         while (true) {
@@ -26,7 +26,7 @@ class WelcomeScreen {
         }
     }
 
-    private boolean validateUrlForDownload(String urlForDownload) {
+    protected boolean validateUrlForDownload(String urlForDownload) {
         if (urlForDownload.contains("/category/")) {
             return true;
         } else {
@@ -36,19 +36,25 @@ class WelcomeScreen {
         return false;
     }
 
-    int getNumberOfEpisodeToStartDownload() {
+    protected int askForStartingNumberOfEpisode() {
         int episodeNumber;
 
         while (true) {
             System.out.println("From which episode do you want to start the download?:\n");
-            Scanner scanner = new Scanner(System.in);
-            try {
-                episodeNumber = scanner.nextInt();
 
-                return episodeNumber;
-            } catch (Exception e) {
-                System.out.println("This is not a valid number. Please enter a valid number.\n");
-            }
+            Scanner scanner = new Scanner(System.in);
+            episodeNumber = scanner.nextInt();
+
+            if (getNumberOfEpisodeToStartDownload(episodeNumber)) return episodeNumber;
         }
+    }
+
+    protected boolean getNumberOfEpisodeToStartDownload(int episodeNumber) {
+        if (episodeNumber > 0) {
+            return true;
+        } else {
+            System.out.println("This is not a valid number. Please enter a valid number.\n");
+        }
+        return false;
     }
 }
