@@ -50,11 +50,23 @@ public class HelpersTest {
 
     @Test
     public void testThatEpisodeNumberIsExtractedSuccessfully() {
-        assertEquals(1, helpers.getEpisodeNumberForSettingCounter("https://www2.gogoanime.io/saint-seiya-omega-episode-1"));
+        assertEquals(1,
+                helpers.getEpisodeNumberForSettingCounter("https://www2.gogoanime.io/saint-seiya-omega-episode-1"));
+        assertEquals(10,
+                helpers.getEpisodeNumberForSettingCounter("https://www2.gogoanime.io/saint-seiya-omega-episode-10"));
+        assertEquals(110,
+                helpers.getEpisodeNumberForSettingCounter("https://www2.gogoanime.io/saint-seiya-omega-episode-110"));
+        assertEquals(999,
+                helpers.getEpisodeNumberForSettingCounter("https://www2.gogoanime.io/saint-seiya-omega-episode-999"));
+        assertEquals(1000,
+                helpers.getEpisodeNumberForSettingCounter("https://www2.gogoanime.io/saint-seiya-omega-episode-1000"));
     }
 
     @Test
     public void testThatEpisodeNumberIsNotExtractedSuccessfully() {
-        assertEquals(-1, helpers.getEpisodeNumberForSettingCounter("https://www2.gogoanime.io/saint-seiya-omega-episode-"));
+        assertEquals(-1,
+                helpers.getEpisodeNumberForSettingCounter("https://www2.gogoanime.io/saint-seiya-omega-episode-"));
+        assertEquals(-1,
+                helpers.getEpisodeNumberForSettingCounter("https://www2.gogoanime.io/saint-seiya-omega-episode-0"));
     }
 }

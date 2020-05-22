@@ -25,7 +25,7 @@ public class Helpers {
 
     /**
      * @param url
-     * @return
+     * @return int
      * @desc Extracts the episode number from link used for resetting the counter when an episode is not found.
      */
     public int getEpisodeNumberForSettingCounter(String url) {
@@ -33,10 +33,11 @@ public class Helpers {
         int indexNumber = endpoint.length - 1;
         String number = endpoint[indexNumber];
 
-        number = number.substring(number.length()-2).replaceAll("\\D+","");
+        //Episode numbers valid up to 9999. Some series One Piece has 1000+ no of episodes
+        number = number.substring(number.length()-4).replaceAll("\\D+","");
 
         try {
-            return Integer.valueOf(number);
+            return Integer.parseInt(number) > 0 ? Integer.parseInt(number) : -1;
         } catch (NumberFormatException e) {
             return -1;
         }
