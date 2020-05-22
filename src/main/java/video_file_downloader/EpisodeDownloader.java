@@ -111,9 +111,9 @@ public class EpisodeDownloader {
     }
 
     /**
-     * @param request
-     * @return
-     * @throws YoutubeDLException
+     * @param request The YoutubeDL request
+     * @return YoutubeDLResponse
+     * @throws YoutubeDLException exception
      */
     private YoutubeDLResponse executeYouTubeDLRequest(YoutubeDLRequest request) throws YoutubeDLException {
         YoutubeDLResponse response = YoutubeDL.execute(
@@ -123,9 +123,9 @@ public class EpisodeDownloader {
     }
 
     /**
-     * @param episodeNumber
-     * @param fileName
-     * @param response
+     * @param episodeNumber The last downloaded episode
+     * @param fileName The downloaded file
+     * @param response YoutubeDLResponse
      */
     private void askToPauseDownloadWhenFinishedSuccessfully(
             String episodeNumber, String fileName, YoutubeDLResponse response) {
@@ -137,7 +137,7 @@ public class EpisodeDownloader {
     }
 
     /**
-     * @param episodeNumberFromService
+     * @param episodeNumberFromService The current episode number
      */
     private void setEpisodeCounter(int episodeNumberFromService) {
         if (episodeCounter < episodeNumberFromService) {
@@ -146,7 +146,7 @@ public class EpisodeDownloader {
     }
 
     /**
-     * @param episodeNumber
+     * @param episodeNumber The current episode number
      */
     private void pauseTheDownload(String episodeNumber) {
         if (Integer.parseInt(episodeNumber) < totalNumberOfEpisodes) {
@@ -160,8 +160,8 @@ public class EpisodeDownloader {
     }
 
     /**
-     * @param urlHome
-     * @return
+     * @param urlHome The main page URL
+     * @return String url
      * @desc Takes the main page url and process it for building the download link for a single episode.
      */
     private String buildUrlForDownloadByEpisode(String urlHome) {
@@ -197,7 +197,7 @@ public class EpisodeDownloader {
     }
 
     /**
-     * @return
+     * @return Sring folderName
      * @desc Builds the folder name from the episode title.
      */
     private String buildFolderNameFromHtmlPage() {
@@ -216,7 +216,7 @@ public class EpisodeDownloader {
     }
 
     /**
-     * @return
+     * @return String title
      * @desc Extracts the file name by scraping the html page
      */
     private String extractFileNameFromHtmlPage() {
@@ -235,8 +235,8 @@ public class EpisodeDownloader {
     }
 
     /**
-     * @return
-     * @throws IOException
+     * @return The scraped title
+     * @throws IOException exception
      * @desc Scraps tags content useful for building the file name and folder's name
      */
     private String getInfoForTitleAndFolderFromHtmlPage() throws IOException {
