@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.APPEND;
 import static java.nio.file.StandardOpenOption.CREATE;
 
@@ -29,11 +28,11 @@ public class Service {
 
     private static final Logger LOGGER = Logger.getLogger(Service.class.getName());
 
-    private EpisodeDownloader episodeProcessor = new EpisodeDownloader();
-    private SaveDirectoryBuilder saveDirectoryBuilder = new SaveDirectoryBuilder(episodeProcessor);
-    private Helpers helpers = new Helpers();
+    private final EpisodeDownloader episodeProcessor = new EpisodeDownloader();
+    private final SaveDirectoryBuilder saveDirectoryBuilder = new SaveDirectoryBuilder(episodeProcessor);
+    private final Helpers helpers = new Helpers();
 
-    private List<String> urlList = episodeProcessor.constructUrlForRequest();
+    private final List<String> urlList = episodeProcessor.constructUrlForRequest();
 
     private int deadlockCounter = 0;
     private int fileMissing = 0;
@@ -64,10 +63,10 @@ public class Service {
     }
 
     /**
-     * @param iterator
-     * @param doc
-     * @param episodeNumber
-     * @param urlLinks
+     * @param iterator Iterator
+     * @param doc The html document
+     * @param episodeNumber Episode number
+     * @param urlLinks The list of the fetched urls
      * @desc Accepts a video url to make the request to yoytube-dl.
      */
     private boolean delegateAvailableServiceToDownloadVideo(
@@ -92,11 +91,11 @@ public class Service {
     }
 
     /**
-     * @param iterator
-     * @param episodeNumber
-     * @param service
-     * @param videoLink
-     * @return
+     * @param iterator Iterator
+     * @param episodeNumber The episode number
+     * @param service The requested service
+     * @param videoLink The link from the url list
+     * @return boolean
      */
     private boolean sendUrlVideoInfoToYouTubeDl(
             Iterator<String> iterator, int episodeNumber, String service, String videoLink) {
@@ -117,7 +116,7 @@ public class Service {
     }
 
     /**
-     * @param service
+     * @param service The current invoked service
      * @desc If after many tries the resource is not available it kills the app.
      * The service will typically throw an exception to increment the counter.
      */
@@ -143,7 +142,7 @@ public class Service {
     }
 
     /**
-     * @param serviceName
+     * @param serviceName The service name
      * @return The url link used for the download.
      * @desc Parses the below html tags to extract the video url.
      */
@@ -173,7 +172,7 @@ public class Service {
     }
 
     /**
-     * @param episodeNumber
+     * @param episodeNumber The episode number
      * @desc Log file
      */
     private void writeDataToLogFile(int episodeNumber, Iterator<String> iterator) {
@@ -181,7 +180,7 @@ public class Service {
             String filePath = saveDirectoryBuilder.buildDownloadDirectory();
             String text = "Episode " + episodeNumber + " was not found.\n";
             try {
-                Files.write(Paths.get(filePath + "/logFile.log"), text.getBytes(UTF_8), CREATE, APPEND);
+                Files.writeString(Paths.get(filePath + "/logFile.log"), text, CREATE, APPEND);
                 iterator.remove();
                 fileMissing = 0;
             } catch (IOException e) {
