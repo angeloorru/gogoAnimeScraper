@@ -78,8 +78,9 @@ public class Service {
             if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
                 String videoLink = getVideoLinkUrl(serviceName);
                 LOGGER.info("[Service " + service + "]: Sending link " + videoLink + " to youtube-dl");
-
-                return sendUrlVideoInfoToYouTubeDl(iterator, episodeNumber, service, videoLink);
+                if (sendUrlVideoInfoToYouTubeDl(iterator, episodeNumber, service, videoLink)) {
+                    return true;
+                }
             } else {
                 fileMissing++;
                 writeDataToLogFile(episodeNumber, iterator);
