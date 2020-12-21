@@ -9,5 +9,8 @@
         <module name="gogoAnimeScraper" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="gogoAnimeScraper" target="14" />
+    </bytecodeTargetLevel>
   </component>
 </project>

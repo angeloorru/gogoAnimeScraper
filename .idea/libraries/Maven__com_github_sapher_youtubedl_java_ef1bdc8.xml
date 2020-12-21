@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: com.github.sapher:youtubedl-java:ef1bdc8">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/sapher/youtubedl-java/ef1bdc8/youtubedl-java-ef1bdc8.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/sapher/youtubedl-java/ef1bdc8/youtubedl-java-ef1bdc8-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/github/sapher/youtubedl-java/ef1bdc8/youtubedl-java-ef1bdc8-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

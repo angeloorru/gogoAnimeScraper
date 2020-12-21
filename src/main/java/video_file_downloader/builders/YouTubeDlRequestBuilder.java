@@ -12,9 +12,9 @@ public class YouTubeDlRequestBuilder {
     }
 
     /**
-     * @param link
-     * @param fileName
-     * @return
+     * @param link The url
+     * @param fileName The filename
+     * @return YoutubeDL request instance object
      * @desc Needed for the request setup for youtube-dl.
      * Allow to setup error handlers, file name and number of re-tries
      */

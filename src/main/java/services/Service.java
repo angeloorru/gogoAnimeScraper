@@ -34,7 +34,7 @@ public class Service {
 
     private final List<String> urlList = episodeProcessor.constructUrlForRequest();
 
-    private int deadlockCounter = 0;
+    private static int deadlockCounter = 0;
     private int fileMissing = 0;
 
     /**
@@ -78,9 +78,8 @@ public class Service {
             if (serviceName != null && helpers.isEpisodeAvailable(serviceName)) {
                 String videoLink = getVideoLinkUrl(serviceName);
                 LOGGER.info("[Service " + service + "]: Sending link " + videoLink + " to youtube-dl");
-                if (sendUrlVideoInfoToYouTubeDl(iterator, episodeNumber, service, videoLink)) {
-                    return true;
-                }
+
+                return sendUrlVideoInfoToYouTubeDl(iterator, episodeNumber, service, videoLink);
             } else {
                 fileMissing++;
                 writeDataToLogFile(episodeNumber, iterator);
@@ -103,6 +102,7 @@ public class Service {
         try {
             episodeProcessor.downloadVideoWithYouTubeDl(videoLink, episodeNumber);
             resetFileCounter();
+            deadlockCounter = 0;
             return true;
         } catch (YoutubeDLException e) {
             LOGGER.severe(e.getMessage());
@@ -121,7 +121,7 @@ public class Service {
      * The service will typically throw an exception to increment the counter.
      */
     private void exitSystemWhenInDeadlock(String service) {
-        if (deadlockCounter == (ServiceEnum.NUMBER_OF_SERVICES.getValue() * 2)) {
+        if (deadlockCounter == (ServiceEnum.NUMBER_OF_SERVICES.getValue())) {
             LOGGER.severe("[" + service + "]: Deadlock occurred");
             System.exit(ServiceEnum.DEADLOCK.getValue());
         }
